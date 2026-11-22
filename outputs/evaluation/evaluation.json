@@ -1,0 +1,172 @@
+{
+  "outputs": {
+    "tp": 10,
+    "fp": 0,
+    "tn": 10,
+    "fn": 0,
+    "reviewPos": 0,
+    "reviewNeg": 0,
+    "errors": 0,
+    "decided": 20,
+    "metrics": {
+      "accuracy": 1,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    "metricsReviewAsCrack": {
+      "accuracy": 1,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    "localization": [
+      {
+        "file": "cracked/cracked_01.jpg",
+        "refCov": [0.269, 0.3341],
+        "predPrec": [0.8234, 1],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_02.jpg",
+        "refCov": [0.3483, 0.3995],
+        "predPrec": [0.9424, 0.9894],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_03.jpg",
+        "refCov": [0.1193, 0.19],
+        "predPrec": [0.5501, 0.7515],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_04.jpg",
+        "refCov": [0.3303, 0.5025],
+        "predPrec": [0.397, 0.5696],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_05.jpg",
+        "refCov": [0.2324, 0.3676],
+        "predPrec": [0.3722, 0.5048],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_06.jpg",
+        "refCov": [0, 0],
+        "predPrec": [0, 0],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_07.jpg",
+        "refCov": [0.3528, 0.4971],
+        "predPrec": [0.54, 0.7263],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_08.jpg",
+        "refCov": [0.4539, 0.4799],
+        "predPrec": [0.906, 0.9853],
+        "inRegion": 1
+      },
+      {
+        "file": "cracked/cracked_09.jpg",
+        "refCov": [0.3164, 0.5389],
+        "predPrec": [0.1125, 0.2658],
+        "inRegion": 0.9809
+      },
+      {
+        "file": "cracked/cracked_10.jpg",
+        "refCov": [0.09317, 0.4845],
+        "predPrec": [0.1108, 0.8029],
+        "inRegion": 1
+      }
+    ],
+    "pooledRefCoverage": [0.2429, 0.3678]
+  },
+  "outputs_baseline": {
+    "tp": 5,
+    "fp": 1,
+    "tn": 9,
+    "fn": 5,
+    "reviewPos": 0,
+    "reviewNeg": 0,
+    "errors": 0,
+    "decided": 20,
+    "metrics": {
+      "accuracy": 0.7,
+      "precision": 0.8333,
+      "recall": 0.5,
+      "f1": 0.625
+    },
+    "metricsReviewAsCrack": {
+      "accuracy": 0.7,
+      "precision": 0.8333,
+      "recall": 0.5,
+      "f1": 0.625
+    },
+    "localization": [
+      {
+        "file": "cracked/cracked_01.jpg",
+        "refCov": [0, 0.0094],
+        "predPrec": [0, 0.004128],
+        "inRegion": 0.008836
+      },
+      {
+        "file": "cracked/cracked_02.jpg",
+        "refCov": [0, 0],
+        "predPrec": [null, null],
+        "inRegion": null
+      },
+      {
+        "file": "cracked/cracked_03.jpg",
+        "refCov": [0, 0],
+        "predPrec": [0, 0],
+        "inRegion": 0
+      },
+      {
+        "file": "cracked/cracked_04.jpg",
+        "refCov": [0, 0],
+        "predPrec": [0, 0],
+        "inRegion": 0.1661
+      },
+      {
+        "file": "cracked/cracked_05.jpg",
+        "refCov": [0, 0],
+        "predPrec": [null, null],
+        "inRegion": null
+      },
+      {
+        "file": "cracked/cracked_06.jpg",
+        "refCov": [0, 0],
+        "predPrec": [null, null],
+        "inRegion": null
+      },
+      {
+        "file": "cracked/cracked_07.jpg",
+        "refCov": [0, 0],
+        "predPrec": [0, 0],
+        "inRegion": 0
+      },
+      {
+        "file": "cracked/cracked_08.jpg",
+        "refCov": [0, 0],
+        "predPrec": [0, 0],
+        "inRegion": 0
+      },
+      {
+        "file": "cracked/cracked_09.jpg",
+        "refCov": [0, 0],
+        "predPrec": [null, null],
+        "inRegion": null
+      },
+      {
+        "file": "cracked/cracked_10.jpg",
+        "refCov": [0, 0],
+        "predPrec": [null, null],
+        "inRegion": null
+      }
+    ],
+    "pooledRefCoverage": [0, 0.001087]
+  }
+}

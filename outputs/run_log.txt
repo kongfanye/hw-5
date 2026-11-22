@@ -1,0 +1,28 @@
+==== 太阳能电池片隐裂检测批处理 ====
+时间: 2026-11-22 14:47:37
+命令: run_batch({'/home/user/hw-5/cracked', '/home/user/hw-5/uncracked'}, '/home/user/hw-5/outputs', 'Method', 'improved')
+运行环境: GNU Octave 8.4.0; image package 2.14.0; x86_64-pc-linux-gnu
+输入目录: /home/user/hw-5/cracked; /home/user/hw-5/uncracked
+方法: improved; 参数版本 1.0（完整参数见 run_config.json）
+找到图像: 20 张
+[1/20] cracked/cracked_01.jpg  有隐裂  裂纹数=2  方向=0.0°  栅距=63.6px  有效区=73%  53.8s 
+[2/20] cracked/cracked_02.jpg  有隐裂  裂纹数=3  方向=86.9°  栅距=55.4px  有效区=93%  64.6s 
+[3/20] cracked/cracked_03.jpg  有隐裂  裂纹数=2  方向=87.7°  栅距=54.8px  有效区=92%  64.4s 
+[4/20] cracked/cracked_04.jpg  有隐裂  裂纹数=6  方向=83.1°  栅距=55.7px  有效区=94%  87.6s 
+[5/20] cracked/cracked_05.jpg  有隐裂  裂纹数=6  方向=88.1°  栅距=55.5px  有效区=90%  64.5s 
+[6/20] cracked/cracked_06.jpg  有隐裂  裂纹数=1  方向=87.0°  栅距=58.4px  有效区=91%  58.9s 
+[7/20] cracked/cracked_07.jpg  有隐裂  裂纹数=2  方向=89.5°  栅距=54.9px  有效区=85%  74.9s 
+[8/20] cracked/cracked_08.jpg  有隐裂  裂纹数=1  方向=89.1°  栅距=54.8px  有效区=79%  59.3s 
+[9/20] cracked/cracked_09.jpg  有隐裂  裂纹数=14  方向=90.0°  栅距=58.0px  有效区=90%  71.0s 
+[10/20] cracked/cracked_10.jpg  有隐裂  裂纹数=3  方向=83.8°  栅距=47.5px  有效区=86%  107.8s 
+[11/20] uncracked/uncracked_01.jpg  无隐裂  裂纹数=0  方向=84.1°  栅距=50.2px  有效区=51%  48.3s 
+[12/20] uncracked/uncracked_02.jpg  无隐裂  裂纹数=0  方向=85.4°  栅距=50.4px  有效区=68%  46.2s 
+[13/20] uncracked/uncracked_03.jpg  无隐裂  裂纹数=0  方向=84.6°  栅距=50.2px  有效区=56%  51.6s 
+[14/20] uncracked/uncracked_04.jpg  无隐裂  裂纹数=0  方向=86.7°  栅距=50.6px  有效区=55%  42.1s 
+[15/20] uncracked/uncracked_05.jpg  无隐裂  裂纹数=0  方向=84.9°  栅距=50.4px  有效区=63%  49.7s 
+[16/20] uncracked/uncracked_06.jpg  无隐裂  裂纹数=0  方向=82.1°  栅距=50.3px  有效区=61%  49.6s 
+[17/20] uncracked/uncracked_07.jpg  无隐裂  裂纹数=0  方向=80.9°  栅距=50.6px  有效区=63%  72.1s 
+[18/20] uncracked/uncracked_08.jpg  无隐裂  裂纹数=0  方向=83.4°  栅距=50.5px  有效区=75%  48.7s 
+[19/20] uncracked/uncracked_09.jpg  无隐裂  裂纹数=0  方向=85.6°  栅距=50.7px  有效区=66%  48.2s 
+[20/20] uncracked/uncracked_10.jpg  无隐裂  裂纹数=0  方向=85.2°  栅距=50.7px  有效区=65%  53.0s 
+完成: 共 20 张；有隐裂 10，无隐裂 10，待复核 0，错误 0
