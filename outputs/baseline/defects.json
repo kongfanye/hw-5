@@ -1,0 +1,663 @@
+{
+  "method": "baseline",
+  "coordinate_system": "原图像素坐标：左上角像素中心为 (1,1)，x 为列向右，y 为行向下；bbox = [x_min, y_min, x_max, y_max]（含两端）；points 为中心线采样点 [x, y]",
+  "generated": "2026-11-22 15:07:55",
+  "environment": "GNU Octave 8.4.0; image package 2.14.0",
+  "config_file": "run_config.json",
+  "images": [
+    {
+      "file": "cracked/cracked_01.jpg",
+      "status": "有隐裂",
+      "status_code": "crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 5,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 0,
+        "grid_ok": true,
+        "grid_periodicity": 0.735,
+        "pitch_px": 63.59,
+        "work_scale": 0.4403,
+        "valid_frac": 0.73,
+        "bright_frac": 0.161,
+        "n_candidates": 8,
+        "runtime_s": 40.7
+      },
+      "overlay": "overlays/cracked_01.jpg",
+      "mask": "masks/cracked_01.png",
+      "cracks": [
+        {
+          "id": 1,
+          "bbox": [40, 2841, 151, 3660],
+          "centroid": [79.1, 3310],
+          "length_px": 2060,
+          "width_px": 26.7,
+          "angle_deg": 90.2,
+          "endpoints": [[112, 3635], [115, 3590], [116, 3528], [118, 3513], [126, 3481], [118, 3451], [115, 3408], [131, 3390], [121, 3381], [108, 3340], [131, 3315], [115, 3279], [131, 3254], [81, 3251], [81, 3167], [119, 3167], [131, 3127], [126, 3095], [128, 3077], [89, 3067], [123, 3040], [97, 3036], [138, 3015], [65, 2854]],
+          "points": [[65, 2854], [59, 2924], [58, 2995], [116, 3015], [115, 3036], [113, 3072], [87, 3095], [81, 3113], [63, 3131], [58, 3151], [56, 3190], [81, 3254], [90, 3267], [81, 3292], [54, 3320], [108, 3340], [59, 3379], [59, 3392], [67, 3408], [59, 3440], [100, 3458], [85, 3476], [59, 3501], [96, 3519], [56, 3542], [58, 3560], [72, 3581], [83, 3599], [79, 3622], [75, 3644]]
+        },
+        {
+          "id": 2,
+          "bbox": [68, 214, 361, 442],
+          "centroid": [170.5, 296.5],
+          "length_px": 1130,
+          "width_px": 25.1,
+          "angle_deg": 146.6,
+          "endpoints": [[84, 429], [83, 417], [117, 365], [175, 327], [205, 293], [267, 283], [273, 254], [290, 241], [99, 235], [348, 229]],
+          "points": [[348, 229], [319, 234], [291, 231], [265, 231], [250, 235], [257, 255], [236, 241], [232, 260], [212, 258], [210, 273], [205, 291], [160, 269], [147, 267], [159, 299], [148, 292], [157, 314], [146, 305], [122, 277], [143, 316], [123, 293], [147, 337], [125, 314], [134, 334], [100, 295], [128, 355], [93, 318], [94, 347], [93, 379], [83, 390], [91, 423]]
+        },
+        {
+          "id": 3,
+          "bbox": [326, 1, 605, 103],
+          "centroid": [464.3, 47.3],
+          "length_px": 703.6,
+          "width_px": 22,
+          "angle_deg": 22.3,
+          "endpoints": [[594, 92], [539, 74], [532, 71], [517, 59], [516, 32], [511, 25], [498, 20], [337, 1], [452, 1]],
+          "points": [[594, 92], [573, 88], [552, 89], [534, 87], [525, 85], [504, 88], [495, 82], [511, 34], [511, 28], [504, 39], [479, 88], [488, 44], [482, 42], [461, 77], [457, 74], [466, 40], [456, 36], [434, 69], [443, 31], [448, 2], [440, 10], [423, 38], [425, 22], [427, 1], [418, 1], [404, 8], [390, 29], [373, 18], [350, 6]]
+        },
+        {
+          "id": 4,
+          "bbox": [4208, 3626, 4346, 3651],
+          "centroid": [4277, 3638],
+          "length_px": 122.6,
+          "width_px": 18.3,
+          "angle_deg": 179.4,
+          "endpoints": [[4337, 3638], [4217, 3638]],
+          "points": [[4337, 3638], [4332, 3638], [4328, 3639], [4323, 3638], [4319, 3638], [4314, 3639], [4310, 3636], [4305, 3637], [4301, 3637], [4296, 3637], [4292, 3637], [4287, 3639], [4282, 3638], [4278, 3636], [4273, 3638], [4269, 3635], [4264, 3638], [4260, 3637], [4255, 3638], [4251, 3638], [4246, 3636], [4242, 3636], [4237, 3638], [4232, 3639], [4228, 3640], [4223, 3640], [4219, 3641]]
+        },
+        {
+          "id": 5,
+          "bbox": [390, 223, 542, 246],
+          "centroid": [466, 235.5],
+          "length_px": 140.8,
+          "width_px": 13.1,
+          "angle_deg": 0,
+          "endpoints": [[535, 236], [397, 232]],
+          "points": [[535, 236], [529, 236], [522, 235], [515, 235], [508, 236], [501, 236], [494, 232], [488, 232], [481, 236], [474, 237], [467, 236], [460, 237], [454, 236], [447, 235], [440, 237], [433, 238], [426, 236], [419, 236], [413, 235], [406, 236], [399, 234]]
+        }
+      ],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_02.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 86.9,
+        "grid_ok": true,
+        "grid_periodicity": 0.7,
+        "pitch_px": 55.44,
+        "work_scale": 0.505,
+        "valid_frac": 0.935,
+        "bright_frac": 0.022,
+        "n_candidates": 2,
+        "runtime_s": 16.3
+      },
+      "overlay": "overlays/cracked_02.jpg",
+      "mask": "masks/cracked_02.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_03.jpg",
+      "status": "有隐裂",
+      "status_code": "crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 1,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 87.7,
+        "grid_ok": true,
+        "grid_periodicity": 0.648,
+        "pitch_px": 54.82,
+        "work_scale": 0.5108,
+        "valid_frac": 0.919,
+        "bright_frac": 0.029,
+        "n_candidates": 3,
+        "runtime_s": 38.2
+      },
+      "overlay": "overlays/cracked_03.jpg",
+      "mask": "masks/cracked_03.png",
+      "cracks": [
+        {
+          "id": 1,
+          "bbox": [106, 856, 170, 1096],
+          "centroid": [133.7, 987.4],
+          "length_px": 382.5,
+          "width_px": 14.6,
+          "angle_deg": 84.3,
+          "endpoints": [[113, 878], [122, 1054], [115, 863], [126, 1076], [137, 1089], [155, 1049], [155, 961], [163, 1008]],
+          "points": [[115, 863], [126, 874], [119, 882], [118, 894], [124, 907], [122, 921], [125, 935], [125, 949], [123, 962], [123, 968], [146, 973], [128, 982], [145, 987], [131, 992], [149, 997], [130, 1005], [152, 1008], [132, 1015], [143, 1015], [132, 1021], [149, 1026], [131, 1035], [150, 1040], [132, 1048], [124, 1054], [133, 1062], [126, 1076], [134, 1079]]
+        }
+      ],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_04.jpg",
+      "status": "有隐裂",
+      "status_code": "crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 4,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 83.1,
+        "grid_ok": true,
+        "grid_periodicity": 0.658,
+        "pitch_px": 55.75,
+        "work_scale": 0.5023,
+        "valid_frac": 0.937,
+        "bright_frac": 0.019,
+        "n_candidates": 5,
+        "runtime_s": 53.2
+      },
+      "overlay": "overlays/cracked_04.jpg",
+      "mask": "masks/cracked_04.png",
+      "cracks": [
+        {
+          "id": 1,
+          "bbox": [132, 3474, 216, 3657],
+          "centroid": [164, 3554],
+          "length_px": 210.6,
+          "width_px": 31.3,
+          "angle_deg": 96.2,
+          "endpoints": [[160, 3633], [148, 3490], [168, 3641], [195, 3524], [200, 3501]],
+          "points": [[148, 3490], [200, 3501], [194, 3502], [190, 3507], [157, 3507], [156, 3511], [181, 3518], [161, 3518], [176, 3520], [171, 3521], [166, 3521], [164, 3528], [160, 3536], [157, 3545], [154, 3553], [151, 3562], [154, 3569], [155, 3577], [156, 3585], [155, 3593], [156, 3601], [159, 3609], [160, 3617], [159, 3625], [162, 3632], [167, 3637]]
+        },
+        {
+          "id": 2,
+          "bbox": [17, 3444, 57, 3649],
+          "centroid": [34.8, 3551],
+          "length_px": 199.4,
+          "width_px": 18,
+          "angle_deg": 86.1,
+          "endpoints": [[30, 3640], [48, 3635], [28, 3453]],
+          "points": [[28, 3453], [27, 3461], [30, 3469], [29, 3477], [30, 3485], [31, 3493], [32, 3501], [32, 3509], [31, 3517], [34, 3525], [35, 3533], [34, 3541], [35, 3549], [34, 3557], [37, 3564], [36, 3573], [38, 3580], [38, 3588], [39, 3596], [38, 3604], [39, 3612], [40, 3620], [41, 3628], [38, 3633], [34, 3637]]
+        },
+        {
+          "id": 3,
+          "bbox": [3174, 1929, 3207, 2066],
+          "centroid": [3190, 1998],
+          "length_px": 125.5,
+          "width_px": 13.7,
+          "angle_deg": 80.7,
+          "endpoints": [[3183, 1936], [3200, 2059]],
+          "points": [[3183, 1936], [3181, 1943], [3181, 1949], [3183, 1955], [3187, 1960], [3185, 1966], [3185, 1972], [3186, 1978], [3188, 1984], [3189, 1990], [3191, 1996], [3193, 2001], [3193, 2007], [3193, 2014], [3193, 2020], [3192, 2026], [3195, 2031], [3198, 2037], [3198, 2043], [3200, 2049], [3200, 2055]]
+        },
+        {
+          "id": 4,
+          "bbox": [3113, 1819, 3150, 1944],
+          "centroid": [3128, 1883],
+          "length_px": 125.6,
+          "width_px": 11,
+          "angle_deg": 81,
+          "endpoints": [[3118, 1824], [3133, 1939], [3145, 1907]],
+          "points": [[3118, 1824], [3122, 1830], [3120, 1836], [3121, 1842], [3121, 1848], [3122, 1854], [3125, 1859], [3125, 1865], [3126, 1871], [3128, 1877], [3128, 1883], [3128, 1889], [3129, 1895], [3130, 1901], [3132, 1907], [3139, 1908], [3133, 1910], [3133, 1917], [3133, 1923], [3132, 1929], [3134, 1934]]
+        }
+      ],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_05.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 88.1,
+        "grid_ok": true,
+        "grid_periodicity": 0.586,
+        "pitch_px": 55.52,
+        "work_scale": 0.5043,
+        "valid_frac": 0.901,
+        "bright_frac": 0.041,
+        "n_candidates": 0,
+        "runtime_s": 14.8
+      },
+      "overlay": "overlays/cracked_05.jpg",
+      "mask": "masks/cracked_05.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_06.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 87,
+        "grid_ok": true,
+        "grid_periodicity": 0.676,
+        "pitch_px": 58.41,
+        "work_scale": 0.4794,
+        "valid_frac": 0.911,
+        "bright_frac": 0.029,
+        "n_candidates": 0,
+        "runtime_s": 14.7
+      },
+      "overlay": "overlays/cracked_06.jpg",
+      "mask": "masks/cracked_06.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_07.jpg",
+      "status": "有隐裂",
+      "status_code": "crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 2,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 89.5,
+        "grid_ok": true,
+        "grid_periodicity": 0.574,
+        "pitch_px": 54.86,
+        "work_scale": 0.5104,
+        "valid_frac": 0.85,
+        "bright_frac": 0.079,
+        "n_candidates": 7,
+        "runtime_s": 48.3
+      },
+      "overlay": "overlays/cracked_07.jpg",
+      "mask": "masks/cracked_07.png",
+      "cracks": [
+        {
+          "id": 1,
+          "bbox": [34, 12, 462, 67],
+          "centroid": [265.1, 44],
+          "length_px": 480.4,
+          "width_px": 29.9,
+          "angle_deg": 177.4,
+          "endpoints": [[49, 48], [390, 46], [447, 27]],
+          "points": [[447, 27], [429, 29], [412, 32], [394, 30], [385, 45], [374, 32], [367, 46], [359, 44], [351, 49], [341, 32], [334, 48], [322, 49], [304, 48], [290, 42], [281, 48], [263, 48], [245, 51], [228, 48], [210, 48], [192, 48], [175, 48], [157, 49], [139, 48], [122, 50], [104, 49], [87, 49], [69, 49], [51, 48]]
+        },
+        {
+          "id": 2,
+          "bbox": [19, 148, 315, 188],
+          "centroid": [162.6, 169.7],
+          "length_px": 284.2,
+          "width_px": 24.7,
+          "angle_deg": 0.6,
+          "endpoints": [[31, 176], [37, 160], [303, 174]],
+          "points": [[303, 174], [293, 172], [284, 171], [274, 170], [264, 168], [254, 172], [244, 169], [235, 170], [225, 170], [215, 170], [205, 170], [195, 170], [186, 169], [176, 169], [166, 170], [156, 170], [146, 169], [137, 170], [127, 169], [117, 170], [107, 169], [97, 170], [88, 168], [78, 170], [68, 170], [58, 168], [49, 167], [41, 167], [37, 162]]
+        }
+      ],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_08.jpg",
+      "status": "有隐裂",
+      "status_code": "crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 2,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 89.1,
+        "grid_ok": true,
+        "grid_periodicity": 0.638,
+        "pitch_px": 54.81,
+        "work_scale": 0.5108,
+        "valid_frac": 0.786,
+        "bright_frac": 0.127,
+        "n_candidates": 3,
+        "runtime_s": 45.3
+      },
+      "overlay": "overlays/cracked_08.jpg",
+      "mask": "masks/cracked_08.png",
+      "cracks": [
+        {
+          "id": 1,
+          "bbox": [90, 32, 179, 363],
+          "centroid": [138.6, 212.2],
+          "length_px": 832.1,
+          "width_px": 25.9,
+          "angle_deg": 90.4,
+          "endpoints": [[103, 289], [104, 305], [104, 94], [108, 309], [105, 52], [107, 86], [111, 45], [123, 348], [159, 334], [162, 48]],
+          "points": [[119, 45], [129, 50], [105, 52], [162, 73], [118, 88], [121, 97], [132, 105], [155, 120], [140, 140], [142, 169], [138, 187], [159, 202], [122, 217], [165, 232], [145, 240], [129, 246], [138, 254], [157, 261], [111, 264], [112, 272], [116, 281], [126, 289], [164, 298], [152, 304], [162, 306], [162, 314], [125, 322], [136, 330], [130, 348]]
+        },
+        {
+          "id": 2,
+          "bbox": [258, 22, 361, 332],
+          "centroid": [305.7, 170.5],
+          "length_px": 932,
+          "width_px": 16.9,
+          "angle_deg": 90.1,
+          "endpoints": [[266, 30], [288, 324], [315, 321], [312, 73], [322, 323], [322, 276], [325, 235], [337, 217], [338, 149], [340, 184], [339, 297], [339, 102], [341, 96], [353, 31]],
+          "points": [[266, 30], [330, 37], [301, 40], [282, 50], [317, 75], [282, 83], [317, 90], [307, 98], [333, 110], [321, 120], [288, 132], [302, 136], [317, 143], [303, 151], [310, 161], [283, 171], [334, 182], [306, 186], [284, 197], [329, 206], [330, 211], [335, 217], [286, 232], [286, 242], [288, 257], [324, 268], [309, 278], [311, 294], [287, 302], [288, 316]]
+        }
+      ],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_09.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 90,
+        "grid_ok": true,
+        "grid_periodicity": 0.571,
+        "pitch_px": 58.03,
+        "work_scale": 0.4825,
+        "valid_frac": 0.902,
+        "bright_frac": 0.066,
+        "n_candidates": 1,
+        "runtime_s": 21.8
+      },
+      "overlay": "overlays/cracked_09.jpg",
+      "mask": "masks/cracked_09.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "cracked/cracked_10.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 83.8,
+        "grid_ok": true,
+        "grid_periodicity": 0.529,
+        "pitch_px": 47.53,
+        "work_scale": 0.5891,
+        "valid_frac": 0.862,
+        "bright_frac": 0.073,
+        "n_candidates": 0,
+        "runtime_s": 21.2
+      },
+      "overlay": "overlays/cracked_10.jpg",
+      "mask": "masks/cracked_10.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_01.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 42%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 84.1,
+        "grid_ok": true,
+        "grid_periodicity": 0.599,
+        "pitch_px": 50.16,
+        "work_scale": 0.5582,
+        "valid_frac": 0.505,
+        "bright_frac": 0.418,
+        "n_candidates": 0,
+        "runtime_s": 17.2
+      },
+      "overlay": "overlays/uncracked_01.jpg",
+      "mask": "masks/uncracked_01.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_02.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 26%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 85.45,
+        "grid_ok": true,
+        "grid_periodicity": 0.623,
+        "pitch_px": 50.43,
+        "work_scale": 0.5552,
+        "valid_frac": 0.681,
+        "bright_frac": 0.262,
+        "n_candidates": 0,
+        "runtime_s": 18
+      },
+      "overlay": "overlays/uncracked_02.jpg",
+      "mask": "masks/uncracked_02.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_03.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 37%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 84.6,
+        "grid_ok": true,
+        "grid_periodicity": 0.603,
+        "pitch_px": 50.17,
+        "work_scale": 0.5581,
+        "valid_frac": 0.557,
+        "bright_frac": 0.373,
+        "n_candidates": 1,
+        "runtime_s": 16.9
+      },
+      "overlay": "overlays/uncracked_03.jpg",
+      "mask": "masks/uncracked_03.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_04.jpg",
+      "status": "有隐裂",
+      "status_code": "crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 1,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 39%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 86.7,
+        "grid_ok": true,
+        "grid_periodicity": 0.554,
+        "pitch_px": 50.59,
+        "work_scale": 0.5535,
+        "valid_frac": 0.548,
+        "bright_frac": 0.387,
+        "n_candidates": 5,
+        "runtime_s": 38.7
+      },
+      "overlay": "overlays/uncracked_04.jpg",
+      "mask": "masks/uncracked_04.png",
+      "cracks": [
+        {
+          "id": 1,
+          "bbox": [3193, 296, 3290, 329],
+          "centroid": [3238, 309.5],
+          "length_px": 106.7,
+          "width_px": 15.6,
+          "angle_deg": 173.5,
+          "endpoints": [[3201, 319], [3202, 308], [3282, 312]],
+          "points": [[3282, 310], [3280, 305], [3280, 308], [3276, 304], [3273, 305], [3269, 306], [3265, 305], [3262, 306], [3258, 304], [3255, 307], [3251, 307], [3247, 307], [3244, 308], [3240, 308], [3237, 308], [3233, 308], [3229, 309], [3226, 308], [3222, 309], [3218, 309], [3217, 310], [3215, 309], [3213, 310], [3211, 309], [3210, 309], [3208, 310], [3206, 310], [3204, 310], [3202, 308], [3201, 319]]
+        }
+      ],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_05.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 32%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 84.9,
+        "grid_ok": true,
+        "grid_periodicity": 0.569,
+        "pitch_px": 50.38,
+        "work_scale": 0.5558,
+        "valid_frac": 0.629,
+        "bright_frac": 0.316,
+        "n_candidates": 7,
+        "runtime_s": 17.3
+      },
+      "overlay": "overlays/uncracked_05.jpg",
+      "mask": "masks/uncracked_05.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_06.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 32%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 82.1,
+        "grid_ok": true,
+        "grid_periodicity": 0.639,
+        "pitch_px": 50.33,
+        "work_scale": 0.5563,
+        "valid_frac": 0.61,
+        "bright_frac": 0.325,
+        "n_candidates": 11,
+        "runtime_s": 17.9
+      },
+      "overlay": "overlays/uncracked_06.jpg",
+      "mask": "masks/uncracked_06.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_07.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 29%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 80.9,
+        "grid_ok": true,
+        "grid_periodicity": 0.574,
+        "pitch_px": 50.6,
+        "work_scale": 0.5534,
+        "valid_frac": 0.628,
+        "bright_frac": 0.287,
+        "n_candidates": 3,
+        "runtime_s": 27.3
+      },
+      "overlay": "overlays/uncracked_07.jpg",
+      "mask": "masks/uncracked_07.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_08.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [],
+      "diagnostics": {
+        "finger_angle_deg": 83.4,
+        "grid_ok": true,
+        "grid_periodicity": 0.638,
+        "pitch_px": 50.45,
+        "work_scale": 0.555,
+        "valid_frac": 0.748,
+        "bright_frac": 0.179,
+        "n_candidates": 7,
+        "runtime_s": 19
+      },
+      "overlay": "overlays/uncracked_08.jpg",
+      "mask": "masks/uncracked_08.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_09.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 27%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 85.6,
+        "grid_ok": true,
+        "grid_periodicity": 0.57,
+        "pitch_px": 50.65,
+        "work_scale": 0.5528,
+        "valid_frac": 0.656,
+        "bright_frac": 0.271,
+        "n_candidates": 4,
+        "runtime_s": 15.3
+      },
+      "overlay": "overlays/uncracked_09.jpg",
+      "mask": "masks/uncracked_09.png",
+      "cracks": [],
+      "error": ""
+    },
+    {
+      "file": "uncracked/uncracked_10.jpg",
+      "status": "无隐裂",
+      "status_code": "no_crack",
+      "image_size": [5488, 3672],
+      "n_cracks": 0,
+      "review_reasons": [],
+      "notes": [
+        "亮缝/过曝区占 28%，该区域不参与检测"
+      ],
+      "diagnostics": {
+        "finger_angle_deg": 85.15,
+        "grid_ok": true,
+        "grid_periodicity": 0.62,
+        "pitch_px": 50.68,
+        "work_scale": 0.5525,
+        "valid_frac": 0.647,
+        "bright_frac": 0.281,
+        "n_candidates": 0,
+        "runtime_s": 16.4
+      },
+      "overlay": "overlays/uncracked_10.jpg",
+      "mask": "masks/uncracked_10.png",
+      "cracks": [],
+      "error": ""
+    }
+  ]
+}
