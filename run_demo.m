@@ -12,9 +12,7 @@ function run_demo(inputDirs)
 
 root = fileparts(mfilename('fullpath'));
 addpath(fullfile(root, 'src'));
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load image
-end
+check_requirements();
 if nargin < 1 || isempty(inputDirs)
     inputDirs = default_input_dirs(root);
 end

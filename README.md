@@ -6,6 +6,37 @@
 
 完整的设计说明、实验结果和局限分析见 [`docs/设计报告.md`](docs/设计报告.md)。
 
+## 下载与运行（第一次使用请看这里）
+
+程序在你自己的电脑上本地运行，不需要联网。
+
+**1. 下载**
+
+- 下载压缩包：<https://github.com/kongfanye/hw-5/archive/refs/heads/claude/vibrant-cray-19kkdm.zip>（约 100 MB，包含 20 张原图和全部实测结果）
+- 或者打开分支页面 <https://github.com/kongfanye/hw-5/tree/claude/vibrant-cray-19kkdm>，点绿色的 **Code → Download ZIP**
+- 解压到任意文件夹即可，路径中可以有中文和空格
+
+**2. 准备软件（二选一）**
+
+| 软件 | 说明 |
+| --- | --- |
+| MATLAB（推荐 R2020a 及以上）+ Image Processing Toolbox | 课程要求的环境。R2016b–R2019b 也能运行，但中文 Windows 上界面中文可能显示为乱码 |
+| GNU Octave 7 及以上（免费） | Windows 安装包自带 image 包；macOS 用 `brew install octave`；Linux 安装 `octave` 和 `octave-image`。缺少 image 包时程序会提示在 Octave 中运行 `pkg install -forge image` |
+
+**3. 启动图形界面**
+
+- Windows：双击文件夹里的 `start_app.bat`
+- macOS / Linux：在终端运行 `bash start_app.sh`
+- 也可以手动启动：打开 MATLAB，把“当前文件夹”切换到解压出来的文件夹，在命令窗口输入 `crack_app`
+
+启动脚本会先找 MATLAB，找不到再找 GNU Octave。缺少工具箱或 image 包时，程序会用中文说明缺什么、怎么安装。
+
+**4. 试用**
+
+- 点界面中间的 **“一键载入示例”**：几十秒内就能看到 20 张示例图的判定和裂纹位置（读取 `outputs/` 中已有的检测结果）
+- 想看程序现场检测：选中一张图按 **R**；或者点 **“添加图片 / 添加文件夹”** 加入你自己的有隐裂、无隐裂图片，再点 **“开始检测”**（每张约 10–90 秒，取决于电脑速度）
+- 批量检测并写出全部结果：在 MATLAB 命令窗口输入 `run_demo`
+
 ## 运行环境
 
 | 项目 | 说明 |
@@ -92,15 +123,18 @@ octave --persist --eval "crack_app('demo')"
 `data/labels.csv` 只用于显示“参考标签”和一致率，不参与检测。
 界面由 `figure` + `uicontrol` + 坐标区绘图实现，不依赖 App Designer，MATLAB 与 Octave 共用同一份代码。
 本次开发环境没有 MATLAB，界面在 GNU Octave 8.4 + Qt 下实际运行，用模拟的鼠标和键盘操作测试过各项交互，上面的截图即来自该环境；在 MATLAB 中的显示效果尚未实测。
+`start_app.sh` 在 Linux + Octave 下测试过；`start_app.bat` 没有 Windows 环境可测，若双击无反应，请按上面的“手动启动”方式运行。
 
 ## 项目结构
 
 ```
+start_app.bat / start_app.sh   双击（Windows）或 bash 运行（macOS/Linux）启动图形界面
 run_demo.m              演示入口：改进法 + 基线 + 评估
 run_batch.m             扫描目录、逐图处理、导出 CSV/JSON/标注图/掩膜/调试图，单张出错不中断
 crack_app.m             图形界面小程序：添加图片、检测、查看判定 / 位置 / 指标 / 中间结果、导出
 src/
   crack_config.m        全部参数（单位与作用见下表）
+  check_requirements.m  检查 MATLAB 版本与工具箱（或 Octave 与 image 包），缺少时给出中文说明
   detect_cracks.m       改进法单图检测 = crack_response + segment_cracks
   crack_response.m      有效区/背景 → 亮度校正 → 栅线与横向结构抑制 → 细暗线响应 z
   segment_cracks.m      双阈值 → 骨架 → 断点连接 → 形状/方向筛选 → 判定

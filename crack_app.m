@@ -21,8 +21,11 @@ function app = crack_app(varargin)
 
 root = fileparts(mfilename('fullpath'));
 addpath(fullfile(root, 'src'));
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load image
+try
+    check_requirements();
+catch err
+    try, errordlg(err.message, '运行环境不满足要求'); catch, end
+    rethrow(err);
 end
 S = init_state(root);
 scr = get(0, 'ScreenSize');

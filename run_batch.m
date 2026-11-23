@@ -15,9 +15,7 @@ function summary = run_batch(inputDirs, outDir, varargin)
 
 root = fileparts(mfilename('fullpath'));
 addpath(fullfile(root, 'src'));
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load image
-end
+check_requirements();
 opt = struct('Method', 'improved', 'Config', [], 'Debug', {{}}, 'Recursive', false);
 for i = 1:2:numel(varargin)
     opt.(varargin{i}) = varargin{i + 1};

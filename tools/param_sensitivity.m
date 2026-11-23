@@ -7,9 +7,7 @@ function param_sensitivity(part, nParts)
 %   结果写入 outputs/evaluation/param_sensitivity.md / .csv；需要 data/labels.csv（仅用于统计）。
 root = fileparts(fileparts(mfilename('fullpath')));
 addpath(fullfile(root, 'src'));
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load image
-end
+check_requirements();
 outDir = fullfile(root, 'outputs', 'evaluation');
 if exist(outDir, 'dir') ~= 7, mkdir(outDir); end
 V = variants();
