@@ -59,11 +59,46 @@ res = detect_cracks(G, cfg);                 % 改进法；基线为 detect_base
 res.status, res.nCracks, res.cracks(1).bbox
 ```
 
+## 图形界面小程序（`crack_app`）
+
+![crack_app 主界面](docs/images/app_main.png)
+
+在项目目录的 MATLAB 命令窗口输入：
+
+```matlab
+crack_app            % 打开界面，用左侧按钮添加图片或文件夹，再点“开始检测”
+crack_app('demo')    % 打开并直接载入项目中的 20 张示例图和 outputs/ 中已有的检测结果（不用等待检测）
+```
+
+GNU Octave：
+
+```bash
+octave --persist --eval "crack_app('demo')"
+```
+
+| 区域 | 显示的信息 |
+| --- | --- |
+| 左栏 | 添加图片 / 文件夹（扩展名大小写不敏感）、选择检测方法（改进法或基线）、开始 / 停止检测、载入已有结果（任意含 `defects.json` 的输出目录）、导出结果；带缩略图和状态标签的图片列表；检测概览（有隐裂 / 无隐裂 / 待复核 / 待检测的数量，以及与参考标签的一致率） |
+| 中间 | 原尺寸图像查看器：滚轮缩放、拖动平移、双击适应窗口，放大后自动从原图裁取高清细节；六个视图：检测标注（红色中心线 + 编号外接框）、原图、有效区域、纹理抑制、暗线响应、候选筛选；底部显示当前视图的图例，状态栏实时显示鼠标处的原图坐标和灰度 |
+| 右栏 | 判定卡片（有隐裂 / 无隐裂 / 待复核，裂纹数、总长、方法、用时）、参考标签对照、细栅方向与间距、有效区域和亮缝 / 过曝占比、复核原因、裂纹列表（长度、角度、宽度、对比度、跨越细栅数、原图坐标框），点击某条裂纹即放大定位并高亮 |
+
+快捷键：↑ / ↓ 切换图片，1–6 切换视图，F 适应窗口，R 重新检测当前图片，Esc 取消选中裂纹。
+在界面中检测的图片会生成全部中间视图；“载入已有结果”只恢复判定和裂纹位置（中间视图可按 R 重新检测生成）。
+“导出结果”写出与 `run_batch` 相同格式的 `results.csv`、`defects.json`、原尺寸标注图和掩膜。
+
+![界面中的中间结果：有效区域、纹理抑制、暗线响应、候选筛选](docs/images/app_views.png)
+
+界面中的检测调用的就是 `detect_cracks` / `detect_baseline`，与批处理结果一致（如 cracked_09 在界面中检测同样得到 14 条裂纹）。
+`data/labels.csv` 只用于显示“参考标签”和一致率，不参与检测。
+界面由 `figure` + `uicontrol` + 坐标区绘图实现，不依赖 App Designer，MATLAB 与 Octave 共用同一份代码。
+本次开发环境没有 MATLAB，界面在 GNU Octave 8.4 + Qt 下实际运行，用模拟的鼠标和键盘操作测试过各项交互，上面的截图即来自该环境；在 MATLAB 中的显示效果尚未实测。
+
 ## 项目结构
 
 ```
 run_demo.m              演示入口：改进法 + 基线 + 评估
 run_batch.m             扫描目录、逐图处理、导出 CSV/JSON/标注图/掩膜/调试图，单张出错不中断
+crack_app.m             图形界面小程序：添加图片、检测、查看判定 / 位置 / 指标 / 中间结果、导出
 src/
   crack_config.m        全部参数（单位与作用见下表）
   detect_cracks.m       改进法单图检测 = crack_response + segment_cracks
@@ -77,6 +112,8 @@ src/
   link_segments.m       同片内共线断点连接
   skeleton_to_full.m    对齐坐标 → 原图坐标，原图上沿法向吸附到暗线中心
   make_overlay.m / save_debug.m / draw_text.m   标注图、中间结果、点阵字体
+  debug_previews.m      把中间结果映射回原图方向，生成界面用的小尺寸预览
+  fill_record.m 等      结果记录、results.csv、defects.json 写出（批处理与界面共用）
   evaluate_results.m    图像级与位置级评估（只在评估阶段读标签）
   其他                  缩放、平滑、JSON/CSV 读写等小工具
 data/
@@ -85,6 +122,7 @@ data/
 cracked/ uncracked/     原始图片（保留原文件名，程序不修改）
 outputs/                实测输出（见下）
 docs/设计报告.md         中文设计报告
+docs/images/            界面截图
 ```
 
 ## 关键参数（`src/crack_config.m`）
