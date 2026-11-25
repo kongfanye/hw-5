@@ -11,7 +11,8 @@ Ic = resize_img(I, sc);
 Sm = gauss_blur(Ic, 0.8);
 R = Sm - gauss_blur(Ic, 3);
 R(R < 0) = 0;
-sat = gauss_blur(double(Ic > 0.95), 2) > 0.3;
+darkBorder = bwareaopen(Ic < 0.04, 50);
+sat = (gauss_blur(double(Ic > 0.95), 2) > 0.3) | disk_dilate(darkBorder, 10);
 R(sat) = 0;
 g.coarseScale = sc;
 g.ok = false;
@@ -44,6 +45,8 @@ try
         [pk2, i2] = max(hs2);
         cands = i1 - 1;
         if pk2 > 0.15 * pk1, cands(end + 1) = i2 - 1; end
+        % 太阳能电池片主栅与细栅正交：始终同时考察正交方向，防止模糊/倾斜时 Hough 仅检出粗主栅
+        cands = unique([cands, mod(cands + 90, 180)], 'stable');
         g.houghAngles = cands;
     end
 catch err

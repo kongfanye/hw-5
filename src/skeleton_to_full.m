@@ -23,15 +23,20 @@ du = cosd(a); dv = sind(a);
 dx = du * geom.g(1) + dv * geom.f(1);
 dy = du * geom.g(2) + dv * geom.f(2);
 nx = -dy; ny = dx;
-% ---- 原图吸附 ----
+% ---- 原图吸附（直接双线性采样，避免对整幅大图重复构造 interp2 网格） ----
 r = cfg.snapRadius;
 bestV = inf(size(X)); tb = zeros(size(X));
+Wm1 = max(1, W - 1); Hm1 = max(1, H - 1);
 for t = -r:r
     val = zeros(size(X));
     for q = -1:1
         xq = min(max(X + t * nx + q * dx, 1), W);
         yq = min(max(Y + t * ny + q * dy, 1), H);
-        val = val + interp2(If, xq, yq, 'linear');
+        x0 = min(floor(xq), Wm1); y0 = min(floor(yq), Hm1);
+        fx = xq - x0; fy = yq - y0;
+        p00 = y0 + (x0 - 1) * H;
+        val = val + (1 - fx) .* ((1 - fy) .* If(p00) + fy .* If(p00 + 1)) + ...
+                     fx      .* ((1 - fy) .* If(p00 + H) + fy .* If(p00 + H + 1));
     end
     upd = val < bestV - 1e-9;
     bestV(upd) = val(upd); tb(upd) = t;
@@ -92,7 +97,7 @@ for q = 1:numel(labsPresent)
     y1 = max(1, min(py) - hw - 1); y2 = min(H, max(py) + hw + 1);
     loc = false(y2 - y1 + 1, x2 - x1 + 1);
     loc(sub2ind(size(loc), py - y1 + 1, px - x1 + 1)) = true;
-    loc = imdilate(loc, disk_mask(hw));
+    loc = disk_dilate(loc, hw);
     mask(y1:y2, x1:x2) = mask(y1:y2, x1:x2) | loc;
     [ly, lx] = find(loc);
     c = struct();
