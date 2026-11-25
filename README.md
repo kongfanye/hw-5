@@ -67,6 +67,8 @@ run_inspect
    - 命令窗口直接打印**逐张判定结果（有缺陷 / 无缺陷 / 待复核）、检出裂纹条数与每条裂纹的像素边界框 `[x_min, y_min, x_max, y_max]`**；
    - 自动弹出**交互式双栏联动查看器**（左栏原图、右栏红线+黄框标注图，使用工具栏放大镜放大右侧裂纹时，左侧原图**同步放大到同一像素区域**以便核对原始暗纹；支持键盘 `←`/`→` 翻页及一键筛选有缺陷样本）；
    - 结果独立保存在 `outputs/inspect/`（含 `overlays/*.jpg`、`masks/*.png`、`results.csv`、`defects.json`），**不会覆盖** `outputs/` 中原有的实验基准结果。
+4. **加上深度网络**（需先安装 Python 依赖，见下文“深度网络”一节）：`run_inspect('D:\助教测试样本', 'DNN', true)`，
+   在传统方法之后再运行网络并融合，汇总表和查看器显示融合结果（`outputs/inspect/fusion/`），网络补充的裂纹为品红色。
 
 ## 完整实验复现（改进法 + 基线对照 + 定量评估）
 
@@ -99,6 +101,42 @@ cfg = crack_config();
 res = detect_cracks(G, cfg);
 res.status, res.nCracks, res.cracks(1).bbox
 ```
+
+## 深度网络（Python + TensorFlow）与融合
+
+借鉴参考工程 [Segmentation-Based Silicon Solar Panel Defect Detection](https://github.com/dreaming-zh/Segmentation-Based-Silicon-Solar-Panel-Defect-Detection)
+（Tabernik 等 2019 的“分割网络 + 决策网络”），本项目新增了一个深度网络，并与传统方法（改进法）融合。
+网络部分用 Python + TensorFlow 实现，传统方法与图形界面仍是 MATLAB；两边的结果格式相同，可互相读取。
+
+**安装（一次）**：Python 3.9–3.12，然后
+
+```bash
+pip install -r dnn/requirements.txt
+```
+
+**使用**：
+
+| 方式 | 命令 | 说明 |
+| --- | --- | --- |
+| MATLAB 一条命令 | `run_dnn('D:\新图片')` | 依次运行传统方法、深度网络并融合，结果写到 `outputs/dnn_inspect/{traditional,dnn,fusion}` |
+| 图形界面 | `crack_app` → 检测方法选“改进法 + 深度网络融合” → 开始检测 | 网络补充的裂纹用品红色画出；新增“网络概率”视图 |
+| 纯 Python | `python dnn/predict.py D:/新图片 --out outputs/dnn` | 加 `--fuse outputs/inspect` 可与已有的传统方法结果融合 |
+
+MATLAB 按 `'Python'` 参数 → 环境变量 `DNN_PYTHON` → `python3` → `python` → `py -3` 的顺序查找装好依赖的 Python。
+
+**它是怎么做的**（详见设计报告第 8 章）：
+
+1. **标签**：参考工程靠人工逐像素涂掩膜。本项目用 `tools/make_dnn_labels.m` 半自动生成：传统方法检出的裂纹 ∪ 人工参考折线“吸附”到真实暗线脊；吸附失败的走廊、裂纹两侧过渡带、区域框内未标注的强暗线设为“忽略”（不计损失）。结果在 `data/dnn_labels/`，`preview/` 里可直接查看。
+2. **输入**：先用频谱估计细栅间距（与 MATLAB 的估计相差 ≤ 2%），把图像缩放到统一栅距 28 px；输入两通道：灰度、亮度校正残差 (I−B)/B（作用同参考工程的同态滤波）。
+3. **网络**：4 级 U-Net 编码器–解码器输出逐像素裂纹概率；决策分支对最深层特征和概率图做全局最大 / 平均池化，输出“本块有无裂纹”。约 0.53 M 参数，权重 2 MB。
+4. **训练**：随机裁取 256×256 小块，约一半以裂纹为中心；旋转（含 90° 与 ±12°）、翻转、±15% 尺度、亮度和噪声增强；损失 = 加权 BCE + Dice（忽略区不计）+ 0.5 × 决策 BCE。
+5. **评估**：按整张图做 5 折交叉验证（每折 2 张有隐裂 + 2 张无隐裂不参与训练），每张图只由没见过它的模型检测，避免参考工程那样的数据泄漏。
+
+**交叉验证结果**：训练进行中，完成后补充（见 `outputs/evaluation/dnn_comparison.md`）。
+
+**复现**：`python dnn/cv.py --final`（5 折交叉验证 + 用全部 20 张图训练部署模型，CPU 约 2 小时）；
+`python dnn/evaluate.py outputs outputs/dnn_cv outputs/fusion_cv` 输出对比表。
+部署模型 `dnn/models/crack_dnn.weights.h5` 用全部 20 张图训练，`outputs/dnn/`、`outputs/fusion/` 是它在训练图上的结果，只供查看，不能当作评估。
 
 ## 图形界面小程序（`crack_app`）
 
@@ -141,6 +179,7 @@ octave --persist --eval "crack_app('demo')"
 start_app.bat / start_app.sh   双击（Windows）或 bash 运行（macOS/Linux）启动图形界面
 crack_app.m             图形界面小程序：添加图片、检测、查看判定 / 位置 / 指标 / 中间结果、导出
 run_inspect.m           助教现场验收专用入口：GUI 选图/文件夹 + 坐标汇总表 + 双栏联动查看器
+run_dnn.m               在 MATLAB 中调用 Python 深度网络并与传统方法融合
 run_demo.m              完整实验演示入口：改进法 + 基线 + 参考集定量评估
 run_batch.m             扫描目录或文件、逐图检测并导出 CSV/JSON/标注图/掩膜/调试图
 src/
@@ -164,9 +203,17 @@ src/
   disk_dilate.m 等      基于精确欧氏距离变换的快速圆盘形态学、抗混叠重采样、JSON/CSV 读写工具
 tools/
   param_sensitivity.m   关键参数单因素敏感性实验
+  make_dnn_labels.m     为深度网络生成半自动像素标签（data/dnn_labels/）
+dnn/                    深度网络（Python + TensorFlow）
+  model.py              分割网络 + 决策网络、损失函数
+  train.py / cv.py      训练、按图像 5 折交叉验证、部署模型训练
+  predict.py            检测新图像、与传统方法融合（输出格式同 run_batch）
+  evaluate.py           与 MATLAB evaluate_results 同口径的评估
+  models/               部署模型与各折模型权重
 data/
   labels.csv            参考类别与样本条件标签
   annotations.json      有隐裂样本的人工参考折线与区域框
+  dnn_labels/           网络训练用的半自动像素标签（0 背景 / 255 裂纹 / 128 忽略）
 cracked/ uncracked/     仓库原始样本图像（只读）
 outputs/                实验输出（标注叠加图、二值掩膜、CSV/JSON、中间结果与评估报告）
 docs/设计报告.md         课程设计报告
