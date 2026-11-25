@@ -8,6 +8,9 @@ if ~isempty(given), cands{end + 1} = ['"' given '"']; end
 env = getenv('DNN_PYTHON');
 if ~isempty(env), cands{end + 1} = ['"' env '"']; end
 cands = [cands, {'python3', 'python', 'py -3'}];
+if isempty(getenv('TF_CPP_MIN_LOG_LEVEL'))
+    setenv('TF_CPP_MIN_LOG_LEVEL', '2');   % 不显示 TensorFlow 的启动提示
+end
 py = '';
 for i = 1:numel(cands)
     [st, ~] = system([cands{i} ' -c "import tensorflow, cv2, skimage"']);

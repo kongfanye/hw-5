@@ -25,6 +25,7 @@ import time
 import cv2
 import numpy as np
 
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")   # 不显示 TensorFlow 的启动提示
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)

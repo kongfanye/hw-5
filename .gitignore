@@ -7,3 +7,5 @@ __pycache__/
 *.pyc
 .venv/
 outputs/dnn_inspect/
+outputs/dnn/
+outputs/fusion/

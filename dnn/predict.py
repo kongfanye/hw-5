@@ -12,8 +12,8 @@
   待复核：没有达标的裂纹段，但有长度 ≥ 1.8 个栅距、平均概率 ≥ 0.6 的较短段，
           或决策网络对某一小块给出 ≥ 0.9 的“有裂纹”概率；
   无隐裂：其余情况。
-融合（--fuse）：裂纹 = 传统方法裂纹 ∪ 网络检出而传统方法没有覆盖的裂纹（标为 source = dnn），
-  任一方法判为有隐裂即为有隐裂。网络补充的裂纹在标注图上用品红色画出。
+融合（--fuse）：裂纹 = 传统方法裂纹 ∪ 网络裂纹中离传统裂纹超过 1 个栅距、且连续长度 ≥ 1.5 个栅距的
+  部分（标为 source = dnn）；任一方法判为有隐裂即为有隐裂。网络补充的裂纹在标注图上用品红色画出。
 """
 from __future__ import annotations
 
@@ -26,11 +26,13 @@ import time
 import cv2
 import numpy as np
 
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")   # 不显示 TensorFlow 的启动提示
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 from common import (STATUS_NAME, TARGET_PITCH, PostCfg, imwrite_unicode, list_images,  # noqa: E402
-                    make_overlay, postprocess, predict_prob, preprocess, read_gray, relpath_key, write_outputs)
+                    make_overlay, order_points, postprocess, predict_prob, preprocess, read_gray, relpath_key,
+                    write_outputs)
 
 DEFAULT_MODEL = os.environ.get("DNN_MODEL") or os.path.join(HERE, "models", "crack_dnn.weights.h5")
 
@@ -93,8 +95,58 @@ def load_traditional(trad_dir: str):
     return {im["file"].lower(): im for im in J["images"]}
 
 
+def far_pieces(c, far, pitch, min_len=1.5):
+    """一条网络裂纹中远离传统裂纹的点（far）按空间邻近分组，返回长度 ≥ min_len 个栅距的各段。
+
+    裂纹的 points 是沿骨架均匀抽取的采样点，每点代表 length_px / 点数 的长度；
+    相邻采样点间距不超过 gap 即视为同一段（分叉裂纹也能正确分组）。
+    """
+    Q = np.asarray(c["points"], float)
+    n = len(Q)
+    if n == 0 or not far.any():
+        return []
+    if far.all():
+        return [dict(c)]
+    share = c["length_px"] / n
+    gap = max(0.75 * pitch, 2.5 * share)
+    F = Q[far]
+    adj = np.hypot(F[:, None, 0] - F[None, :, 0], F[:, None, 1] - F[None, :, 1]) <= gap
+    lab = -np.ones(len(F), int)
+    k = 0
+    for i in range(len(F)):            # 简单的广度优先连通分量
+        if lab[i] >= 0:
+            continue
+        lab[i] = k
+        stack = [i]
+        while stack:
+            j = stack.pop()
+            for m in np.flatnonzero(adj[j] & (lab < 0)):
+                lab[m] = k
+                stack.append(m)
+        k += 1
+    out = []
+    w = c.get("width_px", 4.0)
+    for g in range(k):
+        P = order_points(F[lab == g, 0], F[lab == g, 1])
+        L = len(P) * share
+        if L < min_len * pitch:
+            continue
+        d = np.linalg.eigh(np.cov(P.T))[1][:, -1] if len(P) > 2 else P[-1] - P[0]
+        out.append({
+            "id": 0, "bbox": [int(np.floor(P[:, 0].min() - w / 2)), int(np.floor(P[:, 1].min() - w / 2)),
+                              int(np.ceil(P[:, 0].max() + w / 2)), int(np.ceil(P[:, 1].max() + w / 2))],
+            "centroid": [round(float(P[:, 0].mean()), 1), round(float(P[:, 1].mean()), 1)],
+            "length_px": round(float(L), 1), "width_px": w,
+            "angle_deg": round(float(np.degrees(np.arctan2(d[1], d[0])) % 180), 1),
+            "mean_prob": c.get("mean_prob"),
+            "endpoints": [[int(P[0, 0]), int(P[0, 1])], [int(P[-1, 0]), int(P[-1, 1])]],
+            "points": [[int(p[0]), int(p[1])] for p in P],
+        })
+    return out
+
+
 def fuse(path, r, trad_im, trad_dir):
-    """传统方法裂纹 ∪ 网络新增裂纹。"""
+    """传统方法裂纹 ∪ 网络补充的裂纹段（远离传统裂纹 1 个栅距以上、连续长度 ≥ 1.5 个栅距）。"""
     H, W = r["gray"].shape
     tmask = np.zeros((H, W), np.uint8)
     if trad_im and trad_im.get("mask"):
@@ -106,17 +158,21 @@ def fuse(path, r, trad_im, trad_dir):
     tcr = list(trad_im.get("cracks", [])) if trad_im else []
     for c in tcr:
         c["source"] = "traditional"
-    tol = int(round(r["prep"].pitch))
+    pitch = float(r["prep"].pitch)
+    tol = int(round(pitch))
     near = cv2.dilate(tmask, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * tol + 1, 2 * tol + 1))) > 0
     add = []
+    region = np.zeros((H, W), np.uint8)
     for c in r["cracks"]:
         P = np.array(c["points"]) - 1
         P[:, 0] = np.clip(P[:, 0], 0, W - 1)
         P[:, 1] = np.clip(P[:, 1], 0, H - 1)
-        if near[P[:, 1], P[:, 0]].mean() < 0.5:
-            c2 = dict(c)
-            c2["source"] = "dnn"
-            add.append(c2)
+        for piece in far_pieces(c, ~near[P[:, 1], P[:, 0]], pitch):
+            piece["source"] = "dnn"
+            add.append(piece)
+            rad = int(round(max(0.75 * pitch, 2.5 * c["length_px"] / max(1, len(c["points"])))))
+            for x, y in piece["points"]:
+                cv2.circle(region, (int(x) - 1, int(y) - 1), rad, 255, -1)
     cracks = tcr + add
     for i, c in enumerate(cracks, 1):
         c["id"] = i
@@ -126,14 +182,9 @@ def fuse(path, r, trad_im, trad_dir):
     reasons = (list(trad_im.get("review_reasons", [])) if trad_im else []) + r["reasons"]
     if code == "crack":
         reasons = []
-    notes = [f"传统方法：{STATUS_NAME.get(tcode, tcode)}；网络：{STATUS_NAME[r['code']]}；网络补充 {len(add)} 条"]
-    # 网络补充的裂纹中心线
-    add_center = np.zeros((H, W), np.uint8)
-    for c in add:
-        P = np.array(c["points"], np.int32) - 1
-        for a, b in zip(P[:-1], P[1:]):
-            if abs(int(b[0]) - int(a[0])) + abs(int(b[1]) - int(a[1])) <= 40:
-                cv2.line(add_center, tuple(int(v) for v in a), tuple(int(v) for v in b), 255, 1)
+    notes = [f"传统方法：{STATUS_NAME.get(tcode, tcode)}；网络：{STATUS_NAME[r['code']]}；网络补充 {len(add)} 段"]
+    # 网络补充部分的中心线 = 网络中心线中远离传统裂纹、且属于保留段的像素
+    add_center = ((r["center"] > 0) & ~near & (region > 0)).astype(np.uint8) * 255
     mask = np.maximum(tmask, (cv2.dilate(add_center, np.ones((5, 5), np.uint8)) > 0).astype(np.uint8) * 255)
     return cracks, code, reasons, notes, mask, tmask, add_center, len(add)
 
@@ -177,7 +228,7 @@ def run(model, files, out_dir, fuse_dir=None, fuse_out=None, pc: PostCfg = PostC
                                 code=code, reasons=reasons, notes=notes,
                                 extra_diag={"traditional_status": ti["status_code"] if ti else "missing",
                                             "dnn_status": r["code"], "dnn_added_cracks": nadd}))
-            msg += f"  | 融合：{STATUS_NAME[code]}（网络补充 {nadd} 条）"
+            msg += f"  | 融合：{STATUS_NAME[code]}（网络补充 {nadd} 段）"
         print(msg, flush=True)
     return recs, frecs
 
