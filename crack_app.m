@@ -129,6 +129,7 @@ T.viewer = hx('0B1220');
 T.viewerLine = hx('1E293B');
 T.crackLine = hx('FF3B30');
 T.selLine = hx('22D3EE');
+T.dnnLine = hx('FF4FD8');
 T.box = hx('FBBF24');
 T.danger = hx('E11D48');
 T.good = hx('059669');
@@ -267,8 +268,8 @@ set(h.bRun, 'FontSize', 16);
 h.bLoad = btn('载入已有结果', @(s, e) on_load_results(fig), hx('F1F5F9'), T.sub);
 h.bExport = btn('导出结果', @(s, e) on_export(fig), hx('F1F5F9'), T.sub);
 h.pMethod = uicontrol('Parent', fig, 'Style', 'popupmenu', ...
-    'String', {'改进法（栅线抑制 + 暗线增强）', '基线（背景差分阈值）'}, 'Value', 1, ...
-    'Callback', @(s, e) on_method(fig), 'FontName', fn, 'FontUnits', 'pixels', 'FontSize', 13, ...
+    'String', {'改进法（栅线抑制 + 暗线增强）', '基线（背景差分阈值）', '改进法 + 深度网络融合'}, 'Value', 1, ...
+    'Callback', @(s, e) on_method(fig), 'TooltipString', '融合方式需要已安装 Python 与 dnn/requirements.txt 中的依赖', 'FontName', fn, 'FontUnits', 'pixels', 'FontSize', 13, ...
     'BackgroundColor', [1 1 1], 'ForegroundColor', T.text, 'Units', 'pixels');
 S.h = h;
 end
@@ -515,7 +516,7 @@ txt(ax, 70, 45, 'Solar-cell micro-crack inspector  ·  栅线抑制 + 多方向�
 x = w - 18;
 x = x - chip(ax, x, h / 2, S.env, 12, hx('1E293B'), hx('CBD5E1'), 'right') - 8;
 x = x - chip(ax, x, h / 2, ['参数 v' S.cfg.version], 12, hx('1E293B'), hx('CBD5E1'), 'right') - 8;
-if strcmp(S.method, 'improved'), m = '改进法'; else, m = '基线方法'; end
+m = method_name(S.method);
 chip(ax, x, h / 2, m, 12, hx('312E81'), hx('C7D2FE'), 'right');
 end
 
@@ -685,7 +686,7 @@ end
 %  ======================================================================
 function V = view_defs()
 V = {'overlay', '检测标注'; 'original', '原图'; 'valid', '有效区域'; ...
-     'supp', '纹理抑制'; 'resp', '暗线响应'; 'cand', '候选筛选'};
+     'supp', '纹理抑制'; 'resp', '暗线响应'; 'cand', '候选筛选'; 'prob', '网络概率'};
 end
 
 function ok = view_available(it, v)
@@ -696,6 +697,7 @@ if ~ok, return; end
 switch v
     case 'supp', ok = ~isempty(it.dbg.supp);
     case 'resp', ok = ~isempty(it.dbg.resp);
+    case 'prob', ok = isfield(it.dbg, 'prob') && ~isempty(it.dbg.prob);
 end
 end
 
@@ -769,7 +771,9 @@ end
 function s = view_legend(v, it)
 switch v
     case 'overlay'
-        if ~isempty(it.res) && it.res.nCracks > 0
+        if ~isempty(it.res) && it.res.nCracks > 0 && any(strcmp({it.res.cracks.source}, 'dnn'))
+            s = '红线：传统方法裂纹   品红线：深度网络补充的裂纹   黄框：编号与外接框';
+        elseif ~isempty(it.res) && it.res.nCracks > 0
             s = '红线：裂纹中心线   黄框：裂纹编号与外接框   点击红线可选中';
         else
             s = '检测标注（未检出裂纹时无标记）';
@@ -784,6 +788,7 @@ switch v
         end
     case 'resp', s = '多方向细暗线响应 z（越亮越像细暗线）';
     case 'cand', s = '蓝：未入选候选   橙：弱候选   红：最终裂纹   绿：断点连接';
+    case 'prob', s = '深度网络输出的裂纹概率（越亮概率越高）';
     otherwise, s = '';
 end
 end
@@ -872,6 +877,8 @@ switch v
         for k = 1:4
             C = paint(C, d.cls == k, cols(k, :));
         end
+    case 'prob'
+        C = apply_cmap(it.dbg.prob, magma_map());
     otherwise
         C = P;
 end
@@ -934,7 +941,7 @@ H = {};
 cr = it.res.cracks;
 for i = 1:numel(cr)
     isSel = i == S.selCrack;
-    if isSel, col = T.selLine; else, col = T.crackLine; end
+    if isSel, col = T.selLine; elseif strcmp(cr(i).source, 'dnn'), col = T.dnnLine; else, col = T.crackLine; end
     c = cr(i);
     if ~isempty(c.pixel_xy)
         % 按当前缩放把中心线像素归并到约 1 个屏幕像素的格子，再按 8 邻接连线：
@@ -1136,7 +1143,7 @@ switch it.status
 end
 txt(ax, pad + 18, pad + 96, ellip(sub, w - 2 * pad - 36, 13), 13, T.sub);
 if ~isempty(res)
-    if strcmp(it.method, 'baseline'), mm = '基线'; else, mm = '改进法'; end
+    mm = method_name(it.method);
     if strcmp(it.source, 'loaded'), src = '载入结果'; else, src = '本次检测'; end
     tag = sprintf('%s · %s', mm, src);
     if isfinite(it.runtime), tag = sprintf('%s · %.1f s', tag, it.runtime); end
@@ -1227,13 +1234,18 @@ for v = 1:min(nVis, nCr - S.crackOff)
     else
         rrect(ax, pad, yy, w - 2 * pad, rowH, 10, T.card, T.border);
         bc = st.main;
+        if strcmp(c.source, 'dnn'), bc = hx('0E7490'); end
     end
     rrect(ax, pad + 10, yy + 12, 34, 26, 8, bc);
     txt(ax, pad + 27, yy + 25, sprintf('#%d', c.id), 12, [1 1 1], 'HorizontalAlignment', 'center', 'FontWeight', 'bold');
     l1 = sprintf('长 %s px  ·  %.0f°  ·  宽 %.1f px', fmt_int(c.length_px), c.angle_deg, c.width_px);
     txt(ax, pad + 54, yy + 17, ellip(l1, w - 2 * pad - 64, 13), 13, T.text, 'FontWeight', 'bold');
     b = c.bbox;
-    if isfinite(c.contrast_pct)
+    if isfinite(c.mean_prob)
+        src = '';
+        if strcmp(c.source, 'dnn'), src = '网络补充 · '; end
+        l2 = sprintf('%s网络概率 %.2f · (%d,%d)–(%d,%d)', src, c.mean_prob, b(1), b(2), b(3), b(4));
+    elseif isfinite(c.contrast_pct)
         l2 = sprintf('对比度 %.1f%% · 跨 %.0f 根细栅 · (%d,%d)–(%d,%d)', c.contrast_pct, c.n_fingers_crossed, b(1), b(2), b(3), b(4));
     else
         l2 = sprintf('位置 (%d,%d)–(%d,%d)', b(1), b(2), b(3), b(4));
@@ -1260,10 +1272,10 @@ V = {'细栅方向', '—', ''; '细栅间距', '—', ''; '有效区域', '—'
      '亮缝 / 过曝', '—', ''; '裂纹数量', '—', ''; '裂纹总长', '—', ''};
 if isempty(it.res), return; end
 d = it.res.diag;
-V(1, 2:3) = {sprintf('%.1f°', d.fingerAngleDeg), angle_word(d.fingerAngleDeg)};
-V(2, 2:3) = {sprintf('%.1f', d.pitchFullPx), 'px'};
-V(3, 2:3) = {sprintf('%.0f', 100 * d.validFrac), '%'};
-V(4, 2:3) = {sprintf('%.0f', 100 * d.brightFrac), '%'};
+if isfinite(d.fingerAngleDeg), V(1, 2:3) = {sprintf('%.1f°', d.fingerAngleDeg), angle_word(d.fingerAngleDeg)}; end
+if isfinite(d.pitchFullPx), V(2, 2:3) = {sprintf('%.1f', d.pitchFullPx), 'px'}; end
+if isfinite(d.validFrac), V(3, 2:3) = {sprintf('%.0f', 100 * d.validFrac), '%'}; end
+if isfinite(d.brightFrac), V(4, 2:3) = {sprintf('%.0f', 100 * d.brightFrac), '%'}; end
 V(5, 2:3) = {sprintf('%d', it.res.nCracks), '条'};
 if it.res.nCracks > 0
     V(6, 2:3) = {fmt_int(sum([it.res.cracks.length_px])), 'px'};
@@ -1418,7 +1430,7 @@ switch k
         run_detection(fig, 'selected', false);
     case 'escape'
         select_crack(fig, 0, false);
-    case {'1', '2', '3', '4', '5', '6'}
+    case {'1', '2', '3', '4', '5', '6', '7'}
         V = view_defs();
         set_view(fig, V{str2double(k), 1});
     case {'add', 'equal'}
@@ -1541,7 +1553,7 @@ function set_method(fig, m)
 S = getappdata(fig, 'S');
 if S.running, return; end
 S.method = m;
-set(S.h.pMethod, 'Value', 1 + strcmp(m, 'baseline'));
+set(S.h.pMethod, 'Value', 1 + strcmp(m, 'baseline') + 2 * strcmp(m, 'fusion'));
 setappdata(fig, 'S', S);
 draw_header(fig);
 n = 0;
@@ -1556,13 +1568,19 @@ end
 end
 
 function s = method_name(m)
-if strcmp(m, 'baseline'), s = '基线方法'; else, s = '改进法'; end
+switch m
+    case 'baseline', s = '基线方法';
+    case 'dnn', s = '深度网络';
+    case 'fusion', s = '传统 + 网络融合';
+    otherwise, s = '改进法';
+end
 end
 
 function on_method(fig)
 S = getappdata(fig, 'S');
 v = get(S.h.pMethod, 'Value');
-if v == 2, set_method(fig, 'baseline'); else, set_method(fig, 'improved'); end
+ms = {'improved', 'baseline', 'fusion'};
+set_method(fig, ms{min(max(v, 1), 3)});
 end
 
 %% ======================================================================
@@ -1735,6 +1753,16 @@ if isempty(idx) && ~strcmp(which, 'selected')
     end
     idx = 1:numel(S.items);
 end
+dnnRes = [];
+if strcmp(S.method, 'fusion')
+    [dnnRes, msg] = run_python_dnn(fig, {S.items(idx).path});
+    if isempty(dnnRes)
+        set_status(fig, msg);
+        if interactive, try, errordlg(msg, '深度网络不可用'); catch, end, end
+        return;
+    end
+    S = getappdata(fig, 'S');
+end
 S.running = true; S.stop = false; S.userPicked = false;
 setappdata(fig, 'S', S);
 set_busy(fig, true);
@@ -1765,6 +1793,9 @@ for n = 1:nTot
         end
         P = debug_previews(res.debug, size(G), 1000);
         rt = toc(t0);
+        if strcmp(S.method, 'fusion')
+            [res, P] = fuse_with_dnn(res, P, dnnRes, S.items(k).key);
+        end
     catch err
         errMsg = err.message;
     end
@@ -1776,7 +1807,13 @@ for n = 1:nTot
             [it.preview, it.thumb] = make_previews(RGB);
             it.H = size(RGB, 1); it.W = size(RGB, 2);
         end
-        it.res = slim_result(res);
+        if isfield(res, 'fusedCracks')
+            it.res = slim_result(res);
+            it.res.cracks = res.fusedCracks;
+            it.res.nCracks = numel(res.fusedCracks);
+        else
+            it.res = slim_result(res);
+        end
         it.dbg = P;
         it.maskIdx = uint32(find(res.mask));
         it.status = res.statusCode;
@@ -1832,7 +1869,8 @@ end
 
 function C = norm_cracks(cr)
 C = struct('id', {}, 'bbox', {}, 'centroid', {}, 'length_px', {}, 'width_px', {}, 'angle_deg', {}, ...
-    'mean_z', {}, 'contrast_pct', {}, 'n_fingers_crossed', {}, 'endpoints', {}, 'points', {}, 'pixel_xy', {});
+    'mean_z', {}, 'contrast_pct', {}, 'n_fingers_crossed', {}, 'endpoints', {}, 'points', {}, 'pixel_xy', {}, ...
+    'mean_prob', {}, 'source', {});
 if isempty(cr), return; end
 if iscell(cr)
     cc = cr;
@@ -1846,7 +1884,8 @@ for i = 1:numel(cc)
         'mean_z', getf(c, 'mean_z', NaN), 'contrast_pct', getf(c, 'contrast_pct', NaN), ...
         'n_fingers_crossed', getf(c, 'n_fingers_crossed', NaN), ...
         'endpoints', reshape_pts(getf(c, 'endpoints', [])), 'points', reshape_pts(getf(c, 'points', [])), ...
-        'pixel_xy', getf(c, 'pixel_xy', []));
+        'pixel_xy', getf(c, 'pixel_xy', []), 'mean_prob', getf(c, 'mean_prob', NaN), ...
+        'source', getf(c, 'source', ''));
     C(end + 1) = n; %#ok<AGROW>
 end
 end
@@ -2055,7 +2094,16 @@ for n = 1:numel(sel)
         res.centerline = false(it.H, it.W);
         for i = 1:numel(res.cracks)
             xy = double(res.cracks(i).pixel_xy);
-            if ~isempty(xy), res.centerline(sub2ind([it.H it.W], xy(:, 2), xy(:, 1))) = true; end
+            if ~isempty(xy)
+                res.centerline(sub2ind([it.H it.W], xy(:, 2), xy(:, 1))) = true;
+            elseif ~isempty(res.cracks(i).points)
+                Q = double(res.cracks(i).points);
+                d = hypot(diff(Q(:, 1)), diff(Q(:, 2)));
+                sg = find(d <= 40);
+                cl = draw_segments(false(it.H, it.W), Q(sg, 1), Q(sg, 2), Q(sg + 1, 1), Q(sg + 1, 2), true);
+                res.centerline = res.centerline | cl;
+                res.mask = res.mask | imdilate(cl, disk_mask(2));
+            end
         end
         O = make_overlay(RGB, res, it.method);
         ovRel = ['overlays/' it.stem '.jpg']; mkRel = ['masks/' it.stem '.png'];
@@ -2082,4 +2130,94 @@ skipped = nnz(strcmp({S.items.source}, 'loaded'));
 msg = sprintf('已导出 %d 张图片的结果到 %s', numel(sel), outDir);
 if skipped > 0, msg = sprintf('%s（%d 张载入的结果未重复导出）', msg, skipped); end
 set_status(fig, msg, []);
+end
+
+%% ======================================================================
+%  深度网络（Python）调用与融合
+%  ======================================================================
+function [R, msg] = run_python_dnn(fig, paths)
+% 一次性调用 Python 网络检测全部待测图像，返回按“目录名/文件名”索引的结果
+R = []; msg = '';
+S = getappdata(fig, 'S');
+set_status(fig, '正在查找装好 TensorFlow 的 Python…');
+drawnow;
+py = find_python('');
+if isempty(py)
+    msg = ['没有找到装好 TensorFlow 的 Python。请安装 Python 3.9–3.12 后运行 pip install -r dnn/requirements.txt，' ...
+        '或设置环境变量 DNN_PYTHON 指向解释器；也可以先改用“改进法”。'];
+    return;
+end
+tmp = fullfile(tempdir, sprintf('crack_app_dnn_%d', round(rand * 1e9)));
+cmd = sprintf('%s "%s"%s --out "%s"', py, fullfile(S.root, 'dnn', 'predict.py'), sprintf(' "%s"', paths{:}), tmp);
+set_status(fig, sprintf('正在运行深度网络（Python）：%d 张图像，每张约 5–15 秒，请稍候…', numel(paths)), [0 numel(paths)]);
+drawnow;
+[st, out] = system(cmd);
+if st ~= 0 || exist(fullfile(tmp, 'defects.json'), 'file') ~= 2
+    msg = ['深度网络运行失败：' strtrim(out(max(1, end - 300):end))];
+    return;
+end
+J = jsondecode(read_text_utf8(fullfile(tmp, 'defects.json')));
+ims = J.images;
+if isstruct(ims), ims = num2cell(ims); end
+R = struct('key', {}, 'im', {}, 'prob', {});
+for i = 1:numel(ims)
+    im = ims{i};
+    [~, stem] = fileparts(im.file);
+    pp = fullfile(tmp, 'prob', [stem '.png']);
+    pr = [];
+    if exist(pp, 'file') == 2, pr = imread(pp); end
+    R(end + 1) = struct('key', lower(im.file), 'im', im, 'prob', pr); %#ok<AGROW>
+end
+end
+
+function [res, P] = fuse_with_dnn(res, P, R, key)
+% 传统方法裂纹 ∪ 网络补充的裂纹（网络裂纹点中一半以上离传统裂纹超过 1 个栅距才算“补充”）
+k = find(strcmp({R.key}, key), 1);
+if isempty(k)
+    res.notes{end + 1} = '深度网络没有返回这张图的结果，仅显示传统方法结果';
+    return;
+end
+im = R(k).im;
+P.prob = R(k).prob;
+tc = norm_cracks(res.cracks);
+for i = 1:numel(tc), tc(i).source = 'traditional'; end
+T = zeros(0, 2);
+for i = 1:numel(tc), T = [T; double(tc(i).pixel_xy)]; end %#ok<AGROW>
+dc = norm_cracks(getf(im, 'cracks', []));
+pitch = res.diag.pitchFullPx;
+add = dc([]);
+for i = 1:numel(dc)
+    Q = double(dc(i).points);
+    if isempty(Q), continue; end
+    if isempty(T)
+        nearFrac = 0;
+    else
+        dmin = inf(size(Q, 1), 1);
+        for c0 = 1:5000:size(T, 1)
+            Tc = T(c0:min(end, c0 + 4999), :);
+            d2 = (Q(:, 1) - Tc(:, 1)') .^ 2 + (Q(:, 2) - Tc(:, 2)') .^ 2;
+            dmin = min(dmin, sqrt(min(d2, [], 2)));
+        end
+        nearFrac = mean(dmin <= pitch);
+    end
+    if nearFrac < 0.5
+        dc(i).source = 'dnn';
+        add(end + 1) = dc(i); %#ok<AGROW>
+    end
+end
+fc = [tc, add];
+for i = 1:numel(fc), fc(i).id = i; end
+dcode = im.status_code;
+codes = {res.statusCode, dcode};
+if any(strcmp(codes, 'crack')), code = 'crack';
+elseif any(strcmp(codes, 'review')), code = 'review';
+else, code = 'no_crack';
+end
+names = struct('crack', '有隐裂', 'no_crack', '无隐裂', 'review', '待复核');
+if strcmp(code, 'crack'), res.reviewReasons = {}; end
+res.notes{end + 1} = sprintf('传统方法：%s；深度网络：%s；网络补充 %d 条裂纹', res.status, names.(dcode), numel(add));
+res.statusCode = code;
+res.status = names.(code);
+res.nCracks = numel(fc);
+res.fusedCracks = fc;
 end
