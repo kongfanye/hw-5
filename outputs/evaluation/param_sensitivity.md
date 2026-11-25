@@ -5,14 +5,14 @@
 | 默认参数 | 10 | 0 | 10 | 0 | 0 |  |
 | zHigh = 4.0 | 10 | 0 | 10 | 0 | 0 |  |
 | zHigh = 5.0 | 10 | 0 | 10 | 0 | 0 |  |
-| zHigh = 5.5 | 9 | 0 | 10 | 0 | 1 | cracked_06(待复核) |
+| zHigh = 5.5 | 10 | 0 | 10 | 0 | 0 |  |
 | zLow = 2.0 | 10 | 0 | 10 | 0 | 0 |  |
 | zLow = 3.0 | 10 | 0 | 10 | 0 | 0 |  |
 | minLength = 2.5 | 10 | 0 | 10 | 0 | 0 |  |
 | minLength = 4.0 | 10 | 0 | 10 | 0 | 0 |  |
-| minCross = 1.5 | 10 | 0 | 10 | 0 | 0 |  |
+| minCross = 1.5 | 10 | 0 | 9 | 0 | 1 | uncracked_03(待复核) |
 | minCross = 3.0 | 10 | 0 | 10 | 0 | 0 |  |
 | minMeanZ = 2.5 | 10 | 0 | 10 | 0 | 0 |  |
 | minMeanZ = 3.5 | 10 | 0 | 10 | 0 | 0 |  |
 | linkGapLong = 1.5（不做长距离连接） | 10 | 0 | 10 | 0 | 0 |  |
-| maxBusbarFrac = 1.0（不排除汇流条带候选） | 10 | 0 | 6 | 2 | 2 | uncracked_03(FP)、uncracked_05(FP)、uncracked_04(待复核)、uncracked_10(待复核) |
+| maxBusbarFrac = 1.0（不排除汇流条带候选） | 10 | 0 | 10 | 0 | 0 |  |

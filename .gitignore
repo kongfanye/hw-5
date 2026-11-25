@@ -1,2 +1,4 @@
 octave-workspace
 *.asv
+outputs/inspect/
+outputs/custom_demo/

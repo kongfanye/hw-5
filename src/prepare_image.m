@@ -17,6 +17,9 @@ if ~grid.ok
 end
 s = cfg.targetPitchPx / grid.pitchFull;
 s = min(max(s, cfg.minWorkScale), cfg.maxWorkScale);
+if s > 1 && isfield(cfg, 'maxWorkLongSide')
+    s = min(s, max(1, cfg.maxWorkLongSide / max(H, W)));
+end
 pitch = grid.pitchFull * s;               % 工作图中的栅距 (px)
 prep.scale = s;
 prep.pitch = pitch;
@@ -36,15 +39,25 @@ prep.Ia = Ia;
 
 % ---------- 3. 有效区域 ----------
 inb = ~isnan(Ia);
-inb = imerode(inb, disk_mask(cfg.borderMargin * pitch));
+inb([1 end], :) = false; inb(:, [1 end]) = false;
+inb = disk_dilate(inb, cfg.borderMargin * pitch, 'erode');
 I0 = Ia; I0(isnan(I0)) = 0;
 Is = gauss_blur(I0, 0.25 * pitch);
 bright = Is > cfg.brightThresh & inb;
-bright = imopen(bright, disk_mask(cfg.brightOpenRadius * pitch));
+bright = disk_dilate(bright, cfg.brightOpenRadius * pitch, 'open');
 big = bwareaopen(bright, round(cfg.bigBrightArea * pitch^2));
 small = bright & ~big;
-invalid = ~inb | imdilate(big, disk_mask(cfg.seamMargin * pitch)) | ...
-          imdilate(small, disk_mask(cfg.spotMargin * pitch));
+% 兼容外圈为黑色暗背景的 EL 图像：仅排除与图像边界连通的大面积极暗背景区及其过渡边缘
+darkCand = (I0 < 0.06) & ~isnan(Ia);
+darkCand = disk_dilate(darkCand, 0.25 * pitch, 'open');
+borderSeed = false(size(Ia));
+borderSeed([1 end], :) = true; borderSeed(:, [1 end]) = true;
+borderSeed = imdilate(borderSeed | isnan(Ia), true(3)) & darkCand;
+darkBg = imreconstruct(borderSeed, darkCand, 8);
+darkBg = bwareaopen(darkBg, round(8 * pitch^2));
+invalid = ~inb | disk_dilate(big, cfg.seamMargin * pitch) | ...
+          disk_dilate(darkBg, max(cfg.seamMargin, 1.5) * pitch) | ...
+          disk_dilate(small, cfg.spotMargin * pitch);
 valid = ~invalid;
 valid = bwareaopen(valid, round(cfg.minCellArea * pitch^2), 4);
 prep.valid = valid;

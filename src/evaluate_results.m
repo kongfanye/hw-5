@@ -24,13 +24,16 @@ md{end + 1} = '';
 perImg = {};
 for m = 1:numel(methodDirs)
     mdir = fullfile(root, methodDirs{m});
+    if exist(mdir, 'dir') ~= 7 && exist(methodDirs{m}, 'dir') == 7
+        mdir = methodDirs{m};
+    end
     R = read_csv_simple(fullfile(mdir, 'results.csv'));
     rf = {R.file};
     name = methodDirs{m};
     if ~isempty(regexp(name, 'baseline$', 'once'))
-        title = sprintf('基线（`%s`）', name);
+        title = sprintf('基线（`%s`）', strrep(name, '\', '/'));
     else
-        title = sprintf('改进法（`%s`）', name);
+        title = sprintf('改进法（`%s`）', strrep(name, '\', '/'));
     end
     % ---------- 图像级 ----------
     tp = 0; fp = 0; tn = 0; fn = 0; rvP = 0; rvN = 0; er = 0;
@@ -222,6 +225,9 @@ dRef = bwdist(refMask);
 nPred = numel(py);
 regMask = false(H, W);
 if ~isempty(regions)
+    if isvector(regions) && numel(regions) == 4
+        regions = reshape(regions, 1, 4);
+    end
     for r = 1:size(regions, 1)
         b = regions(r, :);
         regMask(max(1, b(2)):min(H, b(4)), max(1, b(1)):min(W, b(3))) = true;

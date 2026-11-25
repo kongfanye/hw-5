@@ -23,66 +23,66 @@
     "localization": [
       {
         "file": "cracked/cracked_01.jpg",
-        "refCov": [0.269, 0.3341],
-        "predPrec": [0.8234, 1],
+        "refCov": [0.3312, 0.4165],
+        "predPrec": [0.7506, 1],
         "inRegion": 1
       },
       {
         "file": "cracked/cracked_02.jpg",
-        "refCov": [0.3483, 0.3995],
-        "predPrec": [0.9424, 0.9894],
-        "inRegion": 1
+        "refCov": [0.5704, 0.6576],
+        "predPrec": [0.6861, 0.7738],
+        "inRegion": 0.9176
       },
       {
         "file": "cracked/cracked_03.jpg",
-        "refCov": [0.1193, 0.19],
-        "predPrec": [0.5501, 0.7515],
-        "inRegion": 1
+        "refCov": [0.3558, 0.5724],
+        "predPrec": [0.2482, 0.3782],
+        "inRegion": 0.9726
       },
       {
         "file": "cracked/cracked_04.jpg",
-        "refCov": [0.3303, 0.5025],
-        "predPrec": [0.397, 0.5696],
-        "inRegion": 1
+        "refCov": [0.4721, 0.6401],
+        "predPrec": [0.3434, 0.4805],
+        "inRegion": 0.9468
       },
       {
         "file": "cracked/cracked_05.jpg",
-        "refCov": [0.2324, 0.3676],
-        "predPrec": [0.3722, 0.5048],
+        "refCov": [0.4479, 0.6236],
+        "predPrec": [0.3758, 0.5774],
         "inRegion": 1
       },
       {
         "file": "cracked/cracked_06.jpg",
-        "refCov": [0, 0],
-        "predPrec": [0, 0],
+        "refCov": [0.3039, 0.4026],
+        "predPrec": [0.2167, 0.2675],
         "inRegion": 1
       },
       {
         "file": "cracked/cracked_07.jpg",
-        "refCov": [0.3528, 0.4971],
-        "predPrec": [0.54, 0.7263],
+        "refCov": [0.3855, 0.6928],
+        "predPrec": [0.4583, 0.7668],
         "inRegion": 1
       },
       {
         "file": "cracked/cracked_08.jpg",
-        "refCov": [0.4539, 0.4799],
-        "predPrec": [0.906, 0.9853],
+        "refCov": [0.6917, 0.7236],
+        "predPrec": [0.7467, 0.8454],
         "inRegion": 1
       },
       {
         "file": "cracked/cracked_09.jpg",
-        "refCov": [0.3164, 0.5389],
-        "predPrec": [0.1125, 0.2658],
-        "inRegion": 0.9809
+        "refCov": [0.3442, 0.5738],
+        "predPrec": [0.08174, 0.188],
+        "inRegion": 0.9889
       },
       {
         "file": "cracked/cracked_10.jpg",
-        "refCov": [0.09317, 0.4845],
-        "predPrec": [0.1108, 0.8029],
+        "refCov": [0.3012, 0.8345],
+        "predPrec": [0.1739, 0.532],
         "inRegion": 1
       }
     ],
-    "pooledRefCoverage": [0.2429, 0.3678]
+    "pooledRefCoverage": [0.4165, 0.6046]
   },
   "outputs_baseline": {
     "tp": 5,
