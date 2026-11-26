@@ -148,8 +148,16 @@ MATLAB 按 `'Python'` 参数 → 环境变量 `DNN_PYTHON` → `python3` → `py
 - 融合的覆盖率与网络相当，预测精度略低（传统方法的一部分误检被带了进来）；它的价值在于两种方法互为备份、传统方法的结果可解释，而不是更准。
 - 只有 20 张同一批次的图，每折测试 4 张，指标波动较大；换相机、换组件型号后的表现还没有样本验证。图形界面和 `run_inspect` 默认仍用改进法（不依赖 Python）。
 
+![四种方法对比：图像级判定与裂纹位置指标](docs/images/method_comparison.png)
+
+训练损失（5 折各 1600 步，阴影为 5 折的最小–最大范围）：各折曲线几乎重合，约 300 步后进入平缓下降，部署模型落在各折范围内。
+训练时不在测试折上评估、不做早停，所以没有验证曲线，泛化表现以上面的交叉验证结果为准。
+
+![深度网络训练损失](docs/images/dnn_training_curves.png)
+
 **复现**：`python dnn/cv.py --final`（5 折交叉验证 + 用全部 20 张图训练部署模型，CPU 约 2 小时）；
-`python dnn/evaluate.py outputs outputs/dnn_cv outputs/fusion_cv` 输出对比表。
+`python dnn/evaluate.py outputs outputs/baseline outputs/dnn_cv outputs/fusion_cv` 输出对比表；
+`python dnn/plot_figures.py` 重画上面两张图（读 `dnn/models/` 的训练记录，用同一个 `evaluate()` 复算指标）。
 部署模型 `dnn/models/crack_dnn.weights.h5` 用全部 20 张图训练；`--final` 还会把它在训练图上的结果写到 `outputs/dnn/`、`outputs/fusion/`（只供查看，不能当作评估，未提交到仓库）。
 在图形界面里点“载入已有结果”选 `outputs/dnn_cv` 或 `outputs/fusion_cv`，可直接查看交叉验证的检测结果。
 
@@ -225,6 +233,7 @@ dnn/                    深度网络（Python + TensorFlow）
   train.py / cv.py      训练、按图像 5 折交叉验证、部署模型训练
   predict.py            检测新图像、与传统方法融合（输出格式同 run_batch）
   evaluate.py           与 MATLAB evaluate_results 同口径的评估
+  plot_figures.py       画训练损失曲线和方法对比图（docs/images/）
   models/               部署模型与各折模型权重
 data/
   labels.csv            参考类别与样本条件标签

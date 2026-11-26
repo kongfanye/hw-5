@@ -60,7 +60,8 @@ def loc_metrics(pm, a, tols=(25, 50)):
     return out
 
 
-def evaluate(dirs):
+def evaluate(dirs, write=True):
+    """返回每个目录的汇总元组；write=False 时只计算，不写 dnn_comparison.md、不打印（供 plot_figures.py 调用）。"""
     labels, ann = load_refs()
     lines = ["# 方法对比（同一套参考标签与位置标注）", ""]
     summary = []
@@ -109,6 +110,8 @@ def evaluate(dirs):
     for d, tp, fp, tn, fn, rv, er, acc, prec, rec, f1, P in summary:
         head.append(f"| `{d}` | {tp} | {fp} | {tn} | {fn} | {rv} | {pct(acc)} | {pct(prec)} | {pct(rec)} | {pct(f1)} | "
                     f"{pct(P['cov25'])} | {pct(P['cov50'])} | {pct(P['prec50'])} | {pct(P['inreg'])} |")
+    if not write:
+        return summary
     text = "\n".join(lines[:2] + head + [""] + lines[2:])
     os.makedirs(os.path.join(ROOT, "outputs", "evaluation"), exist_ok=True)
     with open(os.path.join(ROOT, "outputs", "evaluation", "dnn_comparison.md"), "w", encoding="utf-8") as fo:

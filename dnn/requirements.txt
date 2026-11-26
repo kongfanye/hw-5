@@ -4,3 +4,5 @@ tensorflow-cpu>=2.15,<2.20
 numpy
 opencv-python-headless
 scikit-image
+# 只有 dnn/plot_figures.py（画训练曲线和方法对比图）需要
+matplotlib
