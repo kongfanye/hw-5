@@ -14,6 +14,9 @@ function summary = run_inspect(inputPaths, varargin)
 %     'ShowFigure'  是否弹出双栏联动缩放查看器（默认 true；无图形界面时自动跳过）
 %     'Recursive'   扫描文件夹时是否包含子文件夹（默认 true）
 %     'Debug'       是否输出 7 步中间结果拼图（默认 {}；设为 {'*'} 输出全部）
+%     'DNN'         是否再运行 Python 深度网络并与传统方法融合（默认 false；需已安装 dnn/requirements.txt）
+%                   融合结果写入 <OutDir>/fusion，网络单独结果写入 <OutDir>/dnn，汇总表与查看器显示融合结果
+%     'Python'      指定 Python 解释器路径（默认自动查找，见 run_dnn）
 %
 %   输出内容：
 %     1. 命令行清晰打印每张图的【有无缺陷判定 + 裂纹条数 + 缺陷像素坐标框】汇总表；
@@ -22,12 +25,10 @@ function summary = run_inspect(inputPaths, varargin)
 
 root = fileparts(mfilename('fullpath'));
 addpath(fullfile(root, 'src'));
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load image
-end
+check_requirements();
 
 opt = struct('OutDir', fullfile(root, 'outputs', 'inspect'), ...
-             'ShowFigure', true, 'Recursive', true, 'Debug', {{}});
+             'ShowFigure', true, 'Recursive', true, 'Debug', {{}}, 'DNN', false, 'Python', '');
 for i = 1:2:numel(varargin)
     opt.(varargin{i}) = varargin{i + 1};
 end
@@ -66,11 +67,36 @@ cfg = crack_config();
 summary = run_batch(inputPaths, opt.OutDir, 'Method', 'improved', ...
     'Config', cfg, 'Debug', opt.Debug, 'Recursive', opt.Recursive);
 
+showDir = opt.OutDir;
+if opt.DNN
+    showDir = run_dnn_fusion(root, inputPaths, opt);
+end
+
 % 打印清晰直观的验收汇总表（含每条裂纹的位置坐标框）
-print_acceptance_table(opt.OutDir);
+print_acceptance_table(showDir);
 
 if opt.ShowFigure
-    show_results_viewer(files, opt.OutDir);
+    show_results_viewer(files, showDir);
+end
+end
+
+function showDir = run_dnn_fusion(root, inputPaths, opt)
+% 调用 Python 深度网络检测同一批图像，并与刚写出的传统方法结果融合
+showDir = opt.OutDir;
+py = find_python(opt.Python);
+if isempty(py)
+    warning('crack:python', '没有找到装好 TensorFlow 的 Python，只给出传统方法结果（安装方法见 README）。');
+    return;
+end
+fprintf('\n---- 深度网络检测并与传统方法融合 ----\n');
+cmd = sprintf('%s "%s"%s --out "%s" --fuse "%s" --fuse-out "%s"', py, fullfile(root, 'dnn', 'predict.py'), ...
+    sprintf(' "%s"', inputPaths{:}), fullfile(opt.OutDir, 'dnn'), opt.OutDir, fullfile(opt.OutDir, 'fusion'));
+st = system(cmd);
+if st == 0 && exist(fullfile(opt.OutDir, 'fusion', 'defects.json'), 'file') == 2
+    showDir = fullfile(opt.OutDir, 'fusion');
+    fprintf('融合结果：%s（网络补充的裂纹在标注图中为品红色）\n', showDir);
+else
+    warning('crack:python', '深度网络运行失败（返回码 %d），只给出传统方法结果。', st);
 end
 end
 

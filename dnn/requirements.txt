@@ -1,0 +1,6 @@
+# 深度网络部分的 Python 依赖（Python 3.9–3.12）。安装：pip install -r dnn/requirements.txt
+# 有 NVIDIA 显卡时可把 tensorflow-cpu 换成 tensorflow 以使用 GPU。
+tensorflow-cpu>=2.15,<2.20
+numpy
+opencv-python-headless
+scikit-image

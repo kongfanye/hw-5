@@ -15,9 +15,7 @@ function summary = run_batch(inputDirs, outDir, varargin)
 
 root = fileparts(mfilename('fullpath'));
 addpath(fullfile(root, 'src'));
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load image
-end
+check_requirements();
 opt = struct('Method', 'improved', 'Config', [], 'Debug', {{}}, 'Recursive', false);
 for i = 1:2:numel(varargin)
     opt.(varargin{i}) = varargin{i + 1};
@@ -61,19 +59,13 @@ recs = struct([]);
 nErr = 0;
 for i = 1:numel(files)
     f = files(i);
-    r = struct('file', f.relpath, 'id', ids{i}, 'status', '读取失败', 'status_code', 'error', ...
-        'n_cracks', 0, 'review_reason', '', 'notes', '', 'overlay', '', 'mask', '', ...
-        'width', 0, 'height', 0, 'finger_angle_deg', NaN, 'pitch_px', NaN, ...
-        'valid_frac', NaN, 'bright_frac', NaN, 'runtime_s', NaN, 'error', '');
-    detail = struct('file', f.relpath, 'status', r.status, 'status_code', 'error', ...
-        'image_size', [], 'n_cracks', 0, 'review_reasons', {{}}, 'notes', {{}}, ...
-        'diagnostics', struct(), 'overlay', '', 'mask', '', 'cracks', {{}}, 'error', '');
+    [r, detail] = empty_record(f.relpath, ids{i});
     t0 = tic;
     try
         [G, RGB] = read_gray(f.path);
     catch err
         nErr = nErr + 1;
-        r.error = ['读取失败: ' clean(err.message)];
+        r.error = ['读取失败: ' csv_clean(err.message)];
         detail.error = r.error;
         logmsg(lf, sprintf('[%d/%d] %s  读取失败: %s', i, numel(files), f.relpath, err.message));
         recs = append_rec(recs, r, detail);
@@ -94,37 +86,15 @@ for i = 1:numel(files)
         if wantDebug
             save_debug(res, RGB, O, fullfile(outDir, 'debug'), ids{i}, cfg);
         end
-        r.status = res.status; r.status_code = res.statusCode;
-        r.n_cracks = res.nCracks;
-        r.review_reason = clean(strjoin(res.reviewReasons, '；'));
-        r.notes = clean(strjoin(res.notes, '；'));
-        r.overlay = ovRel; r.mask = mkRel;
-        r.height = size(G, 1); r.width = size(G, 2);
-        r.finger_angle_deg = res.diag.fingerAngleDeg;
-        r.pitch_px = res.diag.pitchFullPx;
-        r.valid_frac = res.diag.validFrac;
-        r.bright_frac = res.diag.brightFrac;
-        r.runtime_s = toc(t0);
-        detail.status = res.status; detail.status_code = res.statusCode;
-        detail.image_size = [size(G, 2), size(G, 1)];
-        detail.n_cracks = res.nCracks;
-        detail.review_reasons = res.reviewReasons;
-        detail.notes = res.notes;
+        [r, detail] = fill_record(r, detail, res, size(G), toc(t0), ovRel, mkRel);
         dg = res.diag;
-        detail.diagnostics = struct('finger_angle_deg', dg.fingerAngleDeg, 'grid_ok', dg.gridOk, ...
-            'grid_periodicity', round(dg.periodicity * 1000) / 1000, 'pitch_px', round(dg.pitchFullPx * 100) / 100, ...
-            'work_scale', round(dg.workScale * 10000) / 10000, 'valid_frac', round(dg.validFrac * 1000) / 1000, ...
-            'bright_frac', round(dg.brightFrac * 1000) / 1000, 'n_candidates', dg.nCandidates, ...
-            'runtime_s', round(r.runtime_s * 10) / 10);
-        detail.overlay = ovRel; detail.mask = mkRel;
-        detail.cracks = crack_list(res.cracks);
         logmsg(lf, sprintf('[%d/%d] %s  %s  裂纹数=%d  方向=%.1f°  栅距=%.1fpx  有效区=%.0f%%  %.1fs %s', ...
             i, numel(files), f.relpath, res.status, res.nCracks, dg.fingerAngleDeg, dg.pitchFullPx, ...
             100 * dg.validFrac, r.runtime_s, r.review_reason));
     catch err
         nErr = nErr + 1;
         r.status = '处理失败'; r.status_code = 'error';
-        r.error = ['处理失败: ' clean(err.message)];
+        r.error = ['处理失败: ' csv_clean(err.message)];
         detail.status = r.status; detail.error = r.error;
         st = err.stack;
         where = '';
@@ -139,15 +109,7 @@ end
 write_results_csv(fullfile(outDir, 'results.csv'), recs);
 details = {};
 for i = 1:numel(recs), details{end + 1} = recs(i).detail; end %#ok<AGROW>
-J = struct();
-J.method = method;
-J.coordinate_system = ['原图像素坐标：左上角像素中心为 (1,1)，x 为列向右，y 为行向下；' ...
-    'bbox = [x_min, y_min, x_max, y_max]（含两端）；points 为中心线采样点 [x, y]'];
-J.generated = info.time;
-J.environment = [info.platform '; ' info.imageToolbox];
-J.config_file = 'run_config.json';
-J.images = details;
-write_json(fullfile(outDir, 'defects.json'), J);
+write_defects_json(fullfile(outDir, 'defects.json'), method, info, details);
 codes = arrayfun(@(x) x.rec.status_code, recs, 'UniformOutput', false);
 summary.method = method;
 summary.outDir = outDir;
@@ -168,52 +130,6 @@ if k == 1
 else
     recs(k).rec = r; recs(k).detail = detail;
 end
-end
-
-function C = crack_list(cr)
-C = {};
-for i = 1:numel(cr)
-    c = cr(i);
-    s = struct('id', c.id, 'bbox', c.bbox, 'centroid', round(c.centroid * 10) / 10, ...
-        'length_px', round(c.length_px * 10) / 10, 'width_px', round(c.width_px * 10) / 10, ...
-        'angle_deg', round(c.angle_deg * 10) / 10);
-    if isfield(c, 'mean_z')
-        s.mean_z = c.mean_z; s.contrast_pct = c.contrast_pct;
-        s.n_fingers_crossed = c.n_fingers_crossed;
-    end
-    s.endpoints = c.endpoints;
-    s.points = c.points;
-    C{end + 1} = s; %#ok<AGROW>
-end
-end
-
-function write_results_csv(path, recs)
-fid = fopen(path, 'w');
-fwrite(fid, uint8([239 187 191]));     % UTF-8 BOM，便于 Excel 正确显示中文
-hdr = {'file', 'status', 'status_code', 'n_cracks', 'review_reason', 'notes', 'overlay', 'mask', ...
-    'width', 'height', 'finger_angle_deg', 'pitch_px', 'valid_frac', 'bright_frac', 'runtime_s', 'error'};
-put(fid, strjoin(hdr, ','));
-for i = 1:numel(recs)
-    r = recs(i).rec;
-    row = {r.file, r.status, r.status_code, sprintf('%d', r.n_cracks), r.review_reason, r.notes, ...
-        r.overlay, r.mask, sprintf('%d', r.width), sprintf('%d', r.height), num(r.finger_angle_deg, 2), ...
-        num(r.pitch_px, 2), num(r.valid_frac, 3), num(r.bright_frac, 3), num(r.runtime_s, 1), r.error};
-    put(fid, strjoin(row, ','));
-end
-fclose(fid);
-end
-
-function put(fid, s)
-fwrite(fid, unicode2native([s sprintf('\n')], 'UTF-8'));
-end
-
-function s = num(v, d)
-if isnan(v), s = ''; else, s = sprintf(['%.' num2str(d) 'f'], v); end
-end
-
-function s = clean(s)
-% CSV 字段内不出现英文逗号与换行
-s = strrep(strrep(strrep(s, ',', '；'), sprintf('\n'), ' '), sprintf('\r'), ' ');
 end
 
 function s = cell_str(c)

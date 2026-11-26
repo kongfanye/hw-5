@@ -2,3 +2,10 @@ octave-workspace
 *.asv
 outputs/inspect/
 outputs/custom_demo/
+dnn/cache/
+__pycache__/
+*.pyc
+.venv/
+outputs/dnn_inspect/
+outputs/dnn/
+outputs/fusion/

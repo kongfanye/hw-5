@@ -11,7 +11,7 @@ geom = prep.geom; s = geom.s;
 out.Lfull = zeros(H, W, 'uint16');
 out.mask = false(H, W);
 out.cracks = struct('id', {}, 'bbox', {}, 'centroid', {}, 'length_px', {}, ...
-    'width_px', {}, 'angle_deg', {}, 'endpoints', {}, 'points', {});
+    'width_px', {}, 'angle_deg', {}, 'endpoints', {}, 'points', {}, 'pixel_xy', {});
 idx = find(Lsk > 0);
 if isempty(idx), return; end
 [v, u] = ind2sub(size(Lsk), idx);
@@ -124,6 +124,7 @@ for q = 1:numel(labsPresent)
     step = max(1, ceil(numel(o) / maxPts));
     o = o(1:step:end);
     c.points = round([sx(o), sy(o)]);
+    c.pixel_xy = uint16([px, py]);          % 原图中心线全部像素 [x y]，供界面绘制矢量标注
     cr(end + 1) = c; %#ok<AGROW>
 end
 out.mask = mask;
