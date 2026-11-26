@@ -218,6 +218,7 @@ src/
   disk_dilate.m 等      基于精确欧氏距离变换的快速圆盘形态学、抗混叠重采样、JSON/CSV 读写工具
 tools/
   param_sensitivity.m   关键参数单因素敏感性实验
+  robustness_test.m     新样本适应性检查：缩放、旋转、镜像、裁切、欠曝后重新检测（outputs/evaluation/robustness.md）
   make_dnn_labels.m     为深度网络生成半自动像素标签（data/dnn_labels/）
 dnn/                    深度网络（Python + TensorFlow）
   model.py              分割网络 + 决策网络、损失函数
