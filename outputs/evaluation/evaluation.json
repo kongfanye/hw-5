@@ -108,9 +108,9 @@
     "localization": [
       {
         "file": "cracked/cracked_01.jpg",
-        "refCov": [0, 0.0094],
-        "predPrec": [0, 0.004128],
-        "inRegion": 0.008836
+        "refCov": [0, 0],
+        "predPrec": [0, 0],
+        "inRegion": 0
       },
       {
         "file": "cracked/cracked_02.jpg",
@@ -167,6 +167,6 @@
         "inRegion": null
       }
     ],
-    "pooledRefCoverage": [0, 0.001087]
+    "pooledRefCoverage": [0, 0]
   }
 }

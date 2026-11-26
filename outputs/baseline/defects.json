@@ -1,7 +1,7 @@
 {
   "method": "baseline",
   "coordinate_system": "原图像素坐标：左上角像素中心为 (1,1)，x 为列向右，y 为行向下；bbox = [x_min, y_min, x_max, y_max]（含两端）；points 为中心线采样点 [x, y]",
-  "generated": "2026-11-22 15:07:55",
+  "generated": "2026-11-26 02:16:12",
   "environment": "GNU Octave 8.4.0; image package 2.14.0",
   "config_file": "run_config.json",
   "images": [
@@ -10,7 +10,7 @@
       "status": "有隐裂",
       "status_code": "crack",
       "image_size": [5488, 3672],
-      "n_cracks": 5,
+      "n_cracks": 4,
       "review_reasons": [],
       "notes": [],
       "diagnostics": {
@@ -19,63 +19,53 @@
         "grid_periodicity": 0.735,
         "pitch_px": 63.59,
         "work_scale": 0.4403,
-        "valid_frac": 0.73,
-        "bright_frac": 0.161,
-        "n_candidates": 8,
-        "runtime_s": 40.7
+        "valid_frac": 0.712,
+        "bright_frac": 0.155,
+        "n_candidates": 31,
+        "runtime_s": 16.5
       },
       "overlay": "overlays/cracked_01.jpg",
       "mask": "masks/cracked_01.png",
       "cracks": [
         {
           "id": 1,
-          "bbox": [40, 2841, 151, 3660],
-          "centroid": [79.1, 3310],
-          "length_px": 2060,
-          "width_px": 26.7,
-          "angle_deg": 90.2,
-          "endpoints": [[112, 3635], [115, 3590], [116, 3528], [118, 3513], [126, 3481], [118, 3451], [115, 3408], [131, 3390], [121, 3381], [108, 3340], [131, 3315], [115, 3279], [131, 3254], [81, 3251], [81, 3167], [119, 3167], [131, 3127], [126, 3095], [128, 3077], [89, 3067], [123, 3040], [97, 3036], [138, 3015], [65, 2854]],
-          "points": [[65, 2854], [59, 2924], [58, 2995], [116, 3015], [115, 3036], [113, 3072], [87, 3095], [81, 3113], [63, 3131], [58, 3151], [56, 3190], [81, 3254], [90, 3267], [81, 3292], [54, 3320], [108, 3340], [59, 3379], [59, 3392], [67, 3408], [59, 3440], [100, 3458], [85, 3476], [59, 3501], [96, 3519], [56, 3542], [58, 3560], [72, 3581], [83, 3599], [79, 3622], [75, 3644]]
+          "bbox": [340, 10, 710, 106],
+          "centroid": [561, 65.7],
+          "length_px": 456.5,
+          "width_px": 45.8,
+          "angle_deg": 0.4,
+          "endpoints": [[676, 80], [363, 33]],
+          "points": [[687, 52], [683, 40], [676, 42], [669, 81], [665, 49], [658, 54], [653, 42], [647, 80], [642, 68], [638, 46], [631, 78], [626, 67], [624, 57], [610, 75], [594, 77], [578, 77], [563, 77], [547, 79], [531, 77], [515, 79], [499, 77], [483, 79], [467, 80], [451, 75], [435, 69], [420, 60], [404, 51], [388, 44], [372, 37]]
         },
         {
           "id": 2,
-          "bbox": [68, 214, 361, 442],
-          "centroid": [170.5, 296.5],
-          "length_px": 1130,
-          "width_px": 25.1,
-          "angle_deg": 146.6,
-          "endpoints": [[84, 429], [83, 417], [117, 365], [175, 327], [205, 293], [267, 283], [273, 254], [290, 241], [99, 235], [348, 229]],
-          "points": [[348, 229], [319, 234], [291, 231], [265, 231], [250, 235], [257, 255], [236, 241], [232, 260], [212, 258], [210, 273], [205, 291], [160, 269], [147, 267], [159, 299], [148, 292], [157, 314], [146, 305], [122, 277], [143, 316], [123, 293], [147, 337], [125, 314], [134, 334], [100, 295], [128, 355], [93, 318], [94, 347], [93, 379], [83, 390], [91, 423]]
+          "bbox": [76, 214, 361, 374],
+          "centroid": [189.5, 263],
+          "length_px": 636.7,
+          "width_px": 27.9,
+          "angle_deg": 166.4,
+          "endpoints": [[92, 360], [205, 294], [133, 280], [270, 281], [244, 277], [292, 241], [99, 235], [347, 229]],
+          "points": [[347, 229], [327, 233], [304, 234], [292, 240], [270, 234], [268, 274], [259, 259], [254, 255], [245, 265], [240, 261], [224, 240], [216, 256], [209, 268], [200, 251], [191, 254], [168, 261], [150, 253], [145, 269], [138, 277], [133, 280], [111, 236], [99, 235], [95, 251], [92, 263], [92, 292], [93, 322], [95, 340], [94, 358]]
         },
         {
           "id": 3,
-          "bbox": [326, 1, 605, 103],
-          "centroid": [464.3, 47.3],
-          "length_px": 703.6,
-          "width_px": 22,
-          "angle_deg": 22.3,
-          "endpoints": [[594, 92], [539, 74], [532, 71], [517, 59], [516, 32], [511, 25], [498, 20], [337, 1], [452, 1]],
-          "points": [[594, 92], [573, 88], [552, 89], [534, 87], [525, 85], [504, 88], [495, 82], [511, 34], [511, 28], [504, 39], [479, 88], [488, 44], [482, 42], [461, 77], [457, 74], [466, 40], [456, 36], [434, 69], [443, 31], [448, 2], [440, 10], [423, 38], [425, 22], [427, 1], [418, 1], [404, 8], [390, 29], [373, 18], [350, 6]]
+          "bbox": [390, 220, 592, 245],
+          "centroid": [492.2, 234.7],
+          "length_px": 197.6,
+          "width_px": 13.9,
+          "angle_deg": 179.9,
+          "endpoints": [[585, 234], [397, 232], [526, 227]],
+          "points": [[585, 234], [578, 235], [572, 235], [565, 237], [558, 233], [551, 233], [544, 236], [538, 237], [531, 236], [526, 237], [522, 230], [517, 236], [510, 233], [504, 233], [497, 230], [490, 231], [483, 236], [476, 238], [469, 235], [463, 238], [456, 236], [449, 233], [442, 235], [435, 236], [429, 236], [422, 236], [415, 234], [408, 236], [401, 234]]
         },
         {
           "id": 4,
-          "bbox": [4208, 3626, 4346, 3651],
-          "centroid": [4277, 3638],
-          "length_px": 122.6,
-          "width_px": 18.3,
-          "angle_deg": 179.4,
-          "endpoints": [[4337, 3638], [4217, 3638]],
-          "points": [[4337, 3638], [4332, 3638], [4328, 3639], [4323, 3638], [4319, 3638], [4314, 3639], [4310, 3636], [4305, 3637], [4301, 3637], [4296, 3637], [4292, 3637], [4287, 3639], [4282, 3638], [4278, 3636], [4273, 3638], [4269, 3635], [4264, 3638], [4260, 3637], [4255, 3638], [4251, 3638], [4246, 3636], [4242, 3636], [4237, 3638], [4232, 3639], [4228, 3640], [4223, 3640], [4219, 3641]]
-        },
-        {
-          "id": 5,
-          "bbox": [390, 223, 542, 246],
-          "centroid": [466, 235.5],
-          "length_px": 140.8,
-          "width_px": 13.1,
-          "angle_deg": 0,
-          "endpoints": [[535, 236], [397, 232]],
-          "points": [[535, 236], [529, 236], [522, 235], [515, 235], [508, 236], [501, 236], [494, 232], [488, 232], [481, 236], [474, 237], [467, 236], [460, 237], [454, 236], [447, 235], [440, 237], [433, 238], [426, 236], [419, 236], [413, 235], [406, 236], [399, 234]]
+          "bbox": [433, 248, 570, 280],
+          "centroid": [510.1, 260.3],
+          "length_px": 166.1,
+          "width_px": 9.7,
+          "angle_deg": 3.7,
+          "endpoints": [[565, 275], [506, 273], [565, 259], [438, 253], [513, 254]],
+          "points": [[565, 275], [565, 270], [565, 264], [565, 259], [558, 265], [551, 259], [544, 257], [538, 258], [531, 255], [524, 257], [519, 255], [515, 266], [513, 254], [508, 268], [506, 265], [499, 259], [492, 255], [485, 258], [479, 258], [472, 256], [465, 258], [458, 256], [451, 257], [445, 255], [438, 253]]
         }
       ],
       "error": ""
@@ -97,7 +87,7 @@
         "valid_frac": 0.935,
         "bright_frac": 0.022,
         "n_candidates": 2,
-        "runtime_s": 16.3
+        "runtime_s": 13
       },
       "overlay": "overlays/cracked_02.jpg",
       "mask": "masks/cracked_02.png",
@@ -121,7 +111,7 @@
         "valid_frac": 0.919,
         "bright_frac": 0.029,
         "n_candidates": 3,
-        "runtime_s": 38.2
+        "runtime_s": 16.4
       },
       "overlay": "overlays/cracked_03.jpg",
       "mask": "masks/cracked_03.png",
@@ -156,7 +146,7 @@
         "valid_frac": 0.937,
         "bright_frac": 0.019,
         "n_candidates": 5,
-        "runtime_s": 53.2
+        "runtime_s": 28.9
       },
       "overlay": "overlays/cracked_04.jpg",
       "mask": "masks/cracked_04.png",
@@ -221,7 +211,7 @@
         "valid_frac": 0.901,
         "bright_frac": 0.041,
         "n_candidates": 0,
-        "runtime_s": 14.8
+        "runtime_s": 12.8
       },
       "overlay": "overlays/cracked_05.jpg",
       "mask": "masks/cracked_05.png",
@@ -245,7 +235,7 @@
         "valid_frac": 0.911,
         "bright_frac": 0.029,
         "n_candidates": 0,
-        "runtime_s": 14.7
+        "runtime_s": 12.1
       },
       "overlay": "overlays/cracked_06.jpg",
       "mask": "masks/cracked_06.png",
@@ -269,7 +259,7 @@
         "valid_frac": 0.85,
         "bright_frac": 0.079,
         "n_candidates": 7,
-        "runtime_s": 48.3
+        "runtime_s": 24.2
       },
       "overlay": "overlays/cracked_07.jpg",
       "mask": "masks/cracked_07.png",
@@ -314,7 +304,7 @@
         "valid_frac": 0.786,
         "bright_frac": 0.127,
         "n_candidates": 3,
-        "runtime_s": 45.3
+        "runtime_s": 17.9
       },
       "overlay": "overlays/cracked_08.jpg",
       "mask": "masks/cracked_08.png",
@@ -356,10 +346,10 @@
         "grid_periodicity": 0.571,
         "pitch_px": 58.03,
         "work_scale": 0.4825,
-        "valid_frac": 0.902,
-        "bright_frac": 0.066,
+        "valid_frac": 0.875,
+        "bright_frac": 0.065,
         "n_candidates": 1,
-        "runtime_s": 21.8
+        "runtime_s": 18.4
       },
       "overlay": "overlays/cracked_09.jpg",
       "mask": "masks/cracked_09.png",
@@ -383,7 +373,7 @@
         "valid_frac": 0.862,
         "bright_frac": 0.073,
         "n_candidates": 0,
-        "runtime_s": 21.2
+        "runtime_s": 15.9
       },
       "overlay": "overlays/cracked_10.jpg",
       "mask": "masks/cracked_10.png",
@@ -409,7 +399,7 @@
         "valid_frac": 0.505,
         "bright_frac": 0.418,
         "n_candidates": 0,
-        "runtime_s": 17.2
+        "runtime_s": 14
       },
       "overlay": "overlays/uncracked_01.jpg",
       "mask": "masks/uncracked_01.png",
@@ -435,7 +425,7 @@
         "valid_frac": 0.681,
         "bright_frac": 0.262,
         "n_candidates": 0,
-        "runtime_s": 18
+        "runtime_s": 14.6
       },
       "overlay": "overlays/uncracked_02.jpg",
       "mask": "masks/uncracked_02.png",
@@ -461,7 +451,7 @@
         "valid_frac": 0.557,
         "bright_frac": 0.373,
         "n_candidates": 1,
-        "runtime_s": 16.9
+        "runtime_s": 14.6
       },
       "overlay": "overlays/uncracked_03.jpg",
       "mask": "masks/uncracked_03.png",
@@ -487,7 +477,7 @@
         "valid_frac": 0.548,
         "bright_frac": 0.387,
         "n_candidates": 5,
-        "runtime_s": 38.7
+        "runtime_s": 17.7
       },
       "overlay": "overlays/uncracked_04.jpg",
       "mask": "masks/uncracked_04.png",
@@ -524,7 +514,7 @@
         "valid_frac": 0.629,
         "bright_frac": 0.316,
         "n_candidates": 7,
-        "runtime_s": 17.3
+        "runtime_s": 15
       },
       "overlay": "overlays/uncracked_05.jpg",
       "mask": "masks/uncracked_05.png",
@@ -550,7 +540,7 @@
         "valid_frac": 0.61,
         "bright_frac": 0.325,
         "n_candidates": 11,
-        "runtime_s": 17.9
+        "runtime_s": 15.4
       },
       "overlay": "overlays/uncracked_06.jpg",
       "mask": "masks/uncracked_06.png",
@@ -576,7 +566,7 @@
         "valid_frac": 0.628,
         "bright_frac": 0.287,
         "n_candidates": 3,
-        "runtime_s": 27.3
+        "runtime_s": 24.9
       },
       "overlay": "overlays/uncracked_07.jpg",
       "mask": "masks/uncracked_07.png",
@@ -600,7 +590,7 @@
         "valid_frac": 0.748,
         "bright_frac": 0.179,
         "n_candidates": 7,
-        "runtime_s": 19
+        "runtime_s": 15.4
       },
       "overlay": "overlays/uncracked_08.jpg",
       "mask": "masks/uncracked_08.png",
@@ -652,7 +642,7 @@
         "valid_frac": 0.647,
         "bright_frac": 0.281,
         "n_candidates": 0,
-        "runtime_s": 16.4
+        "runtime_s": 15
       },
       "overlay": "overlays/uncracked_10.jpg",
       "mask": "masks/uncracked_10.png",
